@@ -200,7 +200,7 @@ table{border-collapse:collapse;width:100%}
 const RATES={cogs:.124,payFee:.0313,adv:.0109}; // 変動費率12.4%（第2期財務実績：フレーバー+ドリンク等全仕入）
 const RENT=350,CAPEX=15000,TERM=5;
 const DEPRE=Math.round(CAPEX/TERM/12);
-const INIT_K=CAPEX+700+350+525; // 16575（施工中家賃含む）
+const INIT_K=CAPEX+700+350+700+640+200+350+240; // 18180（施工2ヶ月+研修+宿代+ヘルプ代+社宅初期含む）
 let INV_AMT=10000; // 投資家出資金額（千円）デフォルト1000万
 const HRS=Math.round(24*365/12);
 
@@ -212,7 +212,7 @@ const SC={
 };
 const REPAY=[5,7,10];
 
-let S={sc:'base',tab:'summary',staff:1,wage:1.0,mgr:1,mgrSal:250,util:175,other:250,outsource:150,royalty:0,showRoy:false,pct:7};
+let S={sc:'base',tab:'summary',staff:1,wage:1.0,mgr:1,mgrSal:250,util:175,other:250,outsource:150,sha:60,royalty:0,showRoy:false,pct:7};
 
 function pl(rev){
   const cogs=Math.round(rev*RATES.cogs),payF=Math.round(rev*RATES.payFee),adv=Math.round(rev*RATES.adv);
@@ -220,10 +220,10 @@ function pl(rev){
   const varC=cogs+payF+adv+roy,grossP=rev-cogs,limP=rev-varC,cm=limP/rev;
   const partL=Math.round(S.staff*S.wage*HRS),mgrL=Math.round(S.mgr*S.mgrSal),socL=Math.round(mgrL*.15);
   const labor=partL+mgrL+socL;
-  const fixC=labor+RENT+DEPRE+S.util+S.other+S.outsource;
+  const fixC=labor+RENT+DEPRE+S.util+S.other+S.outsource+S.sha;
   const opP=rev-varC-fixC,bep=cm>0?Math.round(fixC/cm):Infinity;
   return{rev,cogs,payF,adv,roy,varC,grossP,limP,cm,partL,mgrL,socL,labor,fixC,opP,bep,
-    gm:grossP/rev,om:opP/rev,lr:labor/rev,util:S.util,other:S.other,outsource:S.outsource};
+    gm:grossP/rev,om:opP/rev,lr:labor/rev,util:S.util,other:S.other,outsource:S.outsource,sha:S.sha};
 }
 const fM=k=>{if(!isFinite(k))return'—';const m=k/10;return m>=0?`¥${m.toFixed(1)}万`:`▲¥${Math.abs(m).toFixed(1)}万`};
 const fP=v=>isFinite(v)?`${(v*100).toFixed(1)}%`:'—';
@@ -270,7 +270,7 @@ function tSummary(){
     <div class="kpi-grid">
       <div class="kpi" style="--ac:${cc(b.opP)}"><div class="kpi-lbl">月次営業利益</div><div class="kpi-val">${fM(b.opP)}</div><div class="kpi-sub">利益率 ${fP(b.om)}</div></div>
       <div class="kpi" style="--ac:var(--navy)"><div class="kpi-lbl">損益分岐点</div><div class="kpi-val">${fM(b.bep)}</div><div class="kpi-sub">達成率 ${fP(5000/b.bep)}</div></div>
-      <div class="kpi" style="--ac:var(--gold)"><div class="kpi-lbl">初期投資合計</div><div class="kpi-val">${fM(INIT_K)}</div><div class="kpi-sub">施工中家賃1.5ヶ月含む ★</div></div>
+      <div class="kpi" style="--ac:var(--gold)"><div class="kpi-lbl">初期投資合計</div><div class="kpi-val">${fM(INIT_K)}</div><div class="kpi-sub">施工2ヶ月+研修+宿代+ヘルプ代+社宅含む ★</div></div>
       <div class="kpi" style="--ac:var(--blue)"><div class="kpi-lbl">粗利益率</div><div class="kpi-val">${fP(b.gm)}</div><div class="kpi-sub">原価率12.4%（第2期財務実績）</div></div>
     </div>
   </div>
@@ -291,7 +291,7 @@ function tSummary(){
     <div class="g2">
       <div class="card">
         <div class="card-ttl">初期投資内訳</div>
-        ${[['内装・設備（フル施工）','¥1,500万',''],['礼金（2ヶ月分）','¥70万',''],['仲介手数料（1ヶ月分）','¥35万',''],['施工期間家賃（1.5ヶ月）★','¥52.5万','gold'],['FC加盟金','¥0（無償）','pos']].map(([k,v,c])=>`
+        ${[['内装・設備（フル施工）','¥1,500万',''],['礼金（2ヶ月分）','¥70万',''],['仲介手数料（1ヶ月分）','¥35万',''],['施工期間家賃（6〜7月・2ヶ月）','¥70万','gold'],['研修人件費（4名×1ヶ月）','¥64万',''],['宿代（マンスリー×2ヶ月）','¥20万',''],['六本木ヘルプ代（給与+交通）','¥35万',''],['社宅初期費用（1K・敷2礼1仲1）','¥24万','gold'],['FC加盟金','¥0（無償）','pos']].map(([k,v,c])=>`
         <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px">
           <span style="color:var(--gray)">${k}</span>
           <span class="${c}" style="font-weight:${c?700:400}">${v}</span>
@@ -299,7 +299,7 @@ function tSummary(){
         <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:15px;font-weight:700;color:var(--navy)">
           <span>合計</span><span>¥${(INIT_K/10).toFixed(1)}万</span>
         </div>
-        <p style="font-size:10px;color:#9aa5be;line-height:1.7">★施工期間家賃：内装工事期間1.5ヶ月分を計上（35万×1.5）</p>
+        <p style="font-size:10px;color:#9aa5be;line-height:1.7">★施工期間家賃：6〜7月の2ヶ月分（¥35万×2）　★社宅：那覇1K・¥6万/月（月次固定費に計上）</p>
       </div>
       <div class="card">
         <div class="card-ttl">返済モデルの特徴（売上連動型）</div>
@@ -355,7 +355,7 @@ function tSummary(){
   <div class="warn-box"><strong style="color:#92400e">【免責事項】</strong>　本資料はCA6DEN運営元DearBrown六本木の実績データをベースとした投資検討用シミュレーションです。将来の収益を保証するものではありません。FC契約条件・ロイヤリティ等は現在交渉中であり、確定次第更新します。</div>`;
 }
 
-// ── タブ：P&L ──
+// ── タブ：PL ──
 function tPL(){
   const sc=SC[S.sc],p=pl(sc.rev);
   const kpis=[
@@ -414,7 +414,8 @@ function tPL(){
             <tr><td class="L" style="padding-left:20px;color:#1d4ed8">地代家賃（確定）<span class="tag tag-fix">固定</span></td><td class="R" style="color:#aab">${fP(RENT/p.rev)}</td><td class="R blue">${fM(RENT)}</td></tr>
             <tr><td class="L" style="padding-left:20px;color:var(--gray)">減価償却（1,500万÷5年÷12）<span class="tag tag-fix">固定</span></td><td class="R" style="color:#aab">${fP(DEPRE/p.rev)}</td><td class="R">${fM(DEPRE)}</td></tr>
             <tr><td class="L" style="padding-left:20px;color:#b8860b">水道光熱費<span class="pl-sh">（実績13.2万+沖縄分追加）</span><span class="tag tag-fix">固定</span></td><td class="R" style="color:#aab">${fP(p.util/p.rev)}</td><td class="R gold">${fM(p.util)}</td></tr>
-            <tr><td class="L" style="padding-left:20px;color:var(--gray)">外注費<span class="pl-sh">（本部サポート等・実績34.5万→保守設定）</span><span class="tag tag-fix">固定</span></td><td class="R" style="color:#aab">${fP(p.outsource/p.rev)}</td><td class="R">${fM(p.outsource)}</td></tr><tr><td class="L" style="padding-left:20px;color:#b8860b">消耗品・広告・その他<span class="pl-sh">（実績：消耗品15+備品13+広告8+旅費8+その他28万）</span><span class="tag tag-fix">固定</span></td><td class="R" style="color:#aab">${fP(p.other/p.rev)}</td><td class="R gold">${fM(p.other)}</td></tr>
+            <tr><td class="L" style="padding-left:20px;color:var(--gray)">外注費<span class="pl-sh">（本部サポート等・実績34.5万→保守設定）</span><span class="tag tag-fix">固定</span></td><td class="R" style="color:#aab">${fP(p.outsource/p.rev)}</td><td class="R">${fM(p.outsource)}</td></tr><tr><td class="L" style="padding-left:20px;color:var(--gray)">社宅家賃（那覇1K）<span class="tag tag-fix">固定</span></td><td class="R" style="color:#aab">${fP(p.sha/p.rev)}</td><td class="R">${fM(p.sha)}</td></tr>
+            <tr><td class="L" style="padding-left:20px;color:#b8860b">消耗品・広告・その他<span class="pl-sh">（実績：消耗品15+備品13+広告8+旅費8+その他28万）</span><span class="tag tag-fix">固定</span></td><td class="R" style="color:#aab">${fP(p.other/p.rev)}</td><td class="R gold">${fM(p.other)}</td></tr>
             <tr class="pl-bold"><td class="L">固定費 計</td><td class="R" style="color:var(--gray)">${fP(p.fixC/p.rev)}</td><td class="R navy">${fM(p.fixC)}</td></tr>
             <tr class="pl-result"><td class="L" style="color:${cc(p.opP)}">営業利益</td><td class="R" style="color:var(--gray)">${fP(p.om)}</td><td class="R" style="color:${cc(p.opP)}">${fM(p.opP)}</td></tr>
           </tbody>
@@ -425,7 +426,7 @@ function tPL(){
         ★強気シナリオ770万円：DB六本木第2期8ヶ月実績の月平均770万円を根拠とし設定。<br>
         ★水道光熱費17.5万：24h・シーシャ炭火・沖縄高温環境を反映（旧設定10万から修正）<br>
         ★その他固定費25万：消耗品・機材メンテ・ゴミ処理・保険含む（旧設定5万から修正）<br>
-        ★初期投資${fM(INIT_K)}に施工中家賃1.5ヶ月（¥52.5万）を計上済み
+        ★初期投資${fM(INIT_K)}：施工2ヶ月+研修+宿代+六本木ヘルプ代+社宅初期費用含む
       </div>
     </div>
 
@@ -453,10 +454,12 @@ function tPL(){
           <input type="range" min="0" max="500" step="25" value="${S.outsource}" oninput="setS('outsource',+this.value)"></div>
         <div class="sl-group"><div class="sl-row"><span>消耗品・広告・その他</span><span class="sl-val">${fM(S.other)}</span></div>
           <input type="range" min="50" max="400" step="25" value="${S.other}" oninput="setS('other',+this.value)"></div>
+        <div class="sl-group"><div class="sl-row"><span>社宅家賃（那覇1K）</span><span class="sl-val">${fM(S.sha)}</span></div>
+          <input type="range" min="40" max="120" step="5" value="${S.sha}" oninput="setS('sha',+this.value)"></div>
       </div>
       <div class="card">
-        <div class="card-ttl">初期投資（確定値）★修正済</div>
-        ${[['内装・設備','¥1,500万',''],['礼金（2ヶ月）','¥70万',''],['仲介（1ヶ月）','¥35万',''],['施工中家賃★','¥52.5万','gold'],['FC加盟金','¥0','pos']].map(([k,v,c])=>`
+        <div class="card-ttl">初期投資内訳（確定値）</div>
+        ${[['内装・設備','¥1,500万',''],['礼金（2ヶ月）','¥70万',''],['仲介（1ヶ月）','¥35万',''],['施工期間家賃（2ヶ月）','¥70万','gold'],['研修人件費（4名）','¥64万',''],['宿代・六本木ヘルプ代','¥55万',''],['社宅初期費用（1K）','¥24万','gold'],['FC加盟金','¥0','pos']].map(([k,v,c])=>`
         <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px">
           <span style="color:${c?'#b8860b':'var(--gray)'}">${k}</span><span class="${c}" style="font-weight:${c?700:400}">${v}</span>
         </div>`).join('')}
