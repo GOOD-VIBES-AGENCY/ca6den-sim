@@ -181,7 +181,7 @@ table{border-collapse:collapse;width:100%}
 
 <script>
 // ── 定数 ──
-const RATES={cogs:.085,payFee:.0313,adv:.0109}; // 原価率8.5%（CA6DEN資料記載値）
+const RATES={cogs:.124,payFee:.0313,adv:.0109}; // 変動費率12.4%（第2期財務実績：フレーバー+ドリンク等全仕入）
 const RENT=350,CAPEX=15000,TERM=5;
 const DEPRE=Math.round(CAPEX/TERM/12);
 const INIT_K=CAPEX+700+350+525; // 16575（施工中家賃含む）
@@ -195,7 +195,7 @@ const SC={
 };
 const REPAY=[3,5,7,10,15];
 
-let S={sc:'base',tab:'summary',staff:1,wage:1.0,mgr:1,mgrSal:250,util:175,other:250,royalty:0,showRoy:false,pct:7};
+let S={sc:'base',tab:'summary',staff:1,wage:1.0,mgr:1,mgrSal:250,util:150,other:200,outsource:150,royalty:0,showRoy:false,pct:7};
 
 function pl(rev){
   const cogs=Math.round(rev*RATES.cogs),payF=Math.round(rev*RATES.payFee),adv=Math.round(rev*RATES.adv);
@@ -203,10 +203,10 @@ function pl(rev){
   const varC=cogs+payF+adv+roy,grossP=rev-cogs,limP=rev-varC,cm=limP/rev;
   const partL=Math.round(S.staff*S.wage*HRS),mgrL=Math.round(S.mgr*S.mgrSal),socL=Math.round(mgrL*.15);
   const labor=partL+mgrL+socL;
-  const fixC=labor+RENT+DEPRE+S.util+S.other;
+  const fixC=labor+RENT+DEPRE+S.util+S.other+S.outsource;
   const opP=rev-varC-fixC,bep=cm>0?Math.round(fixC/cm):Infinity;
   return{rev,cogs,payF,adv,roy,varC,grossP,limP,cm,partL,mgrL,socL,labor,fixC,opP,bep,
-    gm:grossP/rev,om:opP/rev,lr:labor/rev,util:S.util,other:S.other};
+    gm:grossP/rev,om:opP/rev,lr:labor/rev,util:S.util,other:S.other,outsource:S.outsource};
 }
 const fM=k=>{if(!isFinite(k))return'—';const m=k/10;return m>=0?`¥${m.toFixed(1)}万`:`▲¥${Math.abs(m).toFixed(1)}万`};
 const fP=v=>isFinite(v)?`${(v*100).toFixed(1)}%`:'—';
@@ -396,15 +396,15 @@ function tPL(){
             <tr class="pl-bold"><td class="L">人件費 計</td><td class="R" style="color:var(--gray)">${fP(p.lr)}</td><td class="R navy">${fM(p.labor)}</td></tr>
             <tr><td class="L" style="padding-left:20px;color:#1d4ed8">地代家賃（確定）<span class="tag tag-fix">固定</span></td><td class="R" style="color:#aab">${fP(RENT/p.rev)}</td><td class="R blue">${fM(RENT)}</td></tr>
             <tr><td class="L" style="padding-left:20px;color:var(--gray)">減価償却（1,500万÷5年÷12）<span class="tag tag-fix">固定</span></td><td class="R" style="color:#aab">${fP(DEPRE/p.rev)}</td><td class="R">${fM(DEPRE)}</td></tr>
-            <tr><td class="L" style="padding-left:20px;color:#b8860b">水道光熱費 ★24h・シーシャ実態値<span class="tag tag-fix">固定</span></td><td class="R" style="color:#aab">${fP(p.util/p.rev)}</td><td class="R gold">${fM(p.util)}</td></tr>
-            <tr><td class="L" style="padding-left:20px;color:#b8860b">その他固定費 ★消耗品・修繕・保険含む<span class="tag tag-fix">固定</span></td><td class="R" style="color:#aab">${fP(p.other/p.rev)}</td><td class="R gold">${fM(p.other)}</td></tr>
+            <tr><td class="L" style="padding-left:20px;color:#b8860b">水道光熱費<span class="pl-sh">（実績13.2万+沖縄分追加）</span><span class="tag tag-fix">固定</span></td><td class="R" style="color:#aab">${fP(p.util/p.rev)}</td><td class="R gold">${fM(p.util)}</td></tr>
+            <tr><td class="L" style="padding-left:20px;color:var(--gray)">外注費<span class="pl-sh">（本部サポート等・実績34.5万→保守設定）</span><span class="tag tag-fix">固定</span></td><td class="R" style="color:#aab">${fP(p.outsource/p.rev)}</td><td class="R">${fM(p.outsource)}</td></tr><tr><td class="L" style="padding-left:20px;color:#b8860b">消耗品・広告・その他<span class="pl-sh">（実績：消耗品15+備品13+広告8+旅費8+その他28万）</span><span class="tag tag-fix">固定</span></td><td class="R" style="color:#aab">${fP(p.other/p.rev)}</td><td class="R gold">${fM(p.other)}</td></tr>
             <tr class="pl-bold"><td class="L">固定費 計</td><td class="R" style="color:var(--gray)">${fP(p.fixC/p.rev)}</td><td class="R navy">${fM(p.fixC)}</td></tr>
             <tr class="pl-result"><td class="L" style="color:${cc(p.opP)}">営業利益</td><td class="R" style="color:var(--gray)">${fP(p.om)}</td><td class="R" style="color:${cc(p.opP)}">${fM(p.opP)}</td></tr>
           </tbody>
         </table>
       </div>
       <div style="padding:10px 14px;background:#fafbfd;font-size:10px;color:var(--gray);line-height:1.8;border-top:1px solid var(--border)">
-        ★原価率8.5%：CA6DEN公式資料記載値（フレーバー原価率）。廃棄ロスゼロの在庫管理により実現。<br>
+        ★変動費率12.4%：第2期財務実績（仕入高7,671千円÷売上61,613千円）。フレーバー+ドリンク等全仕入。<br>
         ★強気シナリオを850万円に更新：CA6DEN出店計画資料記載「六本木店月商平均実績：850万円」より。<br>
         ★水道光熱費17.5万：24h・シーシャ炭火・沖縄高温環境を反映（旧設定10万から修正）<br>
         ★その他固定費25万：消耗品・機材メンテ・ゴミ処理・保険含む（旧設定5万から修正）<br>
@@ -432,8 +432,10 @@ function tPL(){
         <div class="card-ttl">その他固定費 ★実態ベース</div>
         <div class="sl-group"><div class="sl-row"><span>水道光熱費（24h・シーシャ炭火）</span><span class="sl-val">${fM(S.util)}</span></div>
           <input type="range" min="100" max="400" step="25" value="${S.util}" oninput="setS('util',+this.value)"></div>
-        <div class="sl-group"><div class="sl-row"><span>その他固定費（消耗品・修繕・保険等）</span><span class="sl-val">${fM(S.other)}</span></div>
-          <input type="range" min="50" max="500" step="25" value="${S.other}" oninput="setS('other',+this.value)"></div>
+        <div class="sl-group"><div class="sl-row"><span>外注費（本部サポート等）</span><span class="sl-val">${fM(S.outsource)}</span></div>
+          <input type="range" min="0" max="500" step="25" value="${S.outsource}" oninput="setS('outsource',+this.value)"></div>
+        <div class="sl-group"><div class="sl-row"><span>消耗品・広告・その他</span><span class="sl-val">${fM(S.other)}</span></div>
+          <input type="range" min="50" max="400" step="25" value="${S.other}" oninput="setS('other',+this.value)"></div>
       </div>
       <div class="card">
         <div class="card-ttl">初期投資（確定値）★修正済</div>
@@ -606,8 +608,7 @@ function tScenario(){
         </div>`;
       }).join('')}
     </div>
-    <div style="margin-top:14px;padding:10px 14px;background:#f0f4ff;border-left:3px solid var(--navy);font-size:11px;line-height:1.8">
-      <strong>会員制プログラム（安定収益の柱）</strong>：GOLD ¥4,980/月　PLATINA ¥9,800/月　BLACK ¥19,800/月<br>
+    <div style="margin-top:14px;"><div style="font-size:11px;font-weight:700;color:var(--gray);margin-bottom:8px">月次正味利益（実績・千円）</div><div style="display:flex;gap:4px;align-items:flex-end;flex-wrap:wrap">${[['6月',2101],['7月',884],['8月',3107],['9月',4108],['10月',4112],['11月',2828],['12月',3143],['1月',3624]].map(([m,v])=>{const h=Math.round((v/4200)*60);return`<div style="text-align:center;flex:1;min-width:30px"><div style="font-size:9px;font-weight:700;color:${v>3000?'#15803d':'#c9941a'};margin-bottom:2px">${(v/10).toFixed(0)}万</div><div style="background:${v>3000?'#15803d':'#c9941a'};height:${h}px;border-radius:2px 2px 0 0;"></div><div style="font-size:9px;color:var(--gray);margin-top:3px">${m}</div></div>`}).join('')}</div><div style="font-size:10px;color:var(--gray);margin-top:6px">平均 ¥299万/月（8ヶ月）　最高 ¥411万（9・10月）　最低 ¥88万（7月・開業初期）</div></div>    <div style="margin-top:14px;padding:10px 14px;background:#f0f4ff;border-left:3px solid var(--navy);font-size:11px;line-height:1.8">      <strong>会員制プログラム（安定収益の柱）</strong>：GOLD ¥4,980/月　PLATINA ¥9,800/月　BLACK ¥19,800/月<br>
       会員数が増えるほど固定収益が積み上がり、損益分岐点のリスクが低下する。
     </div>
   </div>
