@@ -170,7 +170,7 @@ table{border-collapse:collapse;width:100%}
   <button class="inv-btn" data-inv="7500">¥750万</button>
   <button class="inv-btn" data-inv="10000">¥1,000万</button>
   <button class="inv-btn" data-inv="15000">¥1,500万</button>
-  <span class="inv-note" id="inv-note">初期費用合計 ¥1,657.5万 ｜ GVA自己資金: <strong id="inv-total"></strong></span>
+
 </div>
 
 <div id="scbar">
@@ -211,7 +211,7 @@ const SC={
   bull:{label:'強気',  rev:7700, color:'#15803d',note:'DB六本木同等・送客フル稼働'},
   super:{label:'超強気',rev:10000,color:'#6d28d9',note:'VIPイベント常態化'},
 };
-const REPAY=[3,5,7,10,15];
+const REPAY=[5,7,10];
 
 let S={sc:'base',tab:'summary',staff:1,wage:1.0,mgr:1,mgrSal:250,util:150,other:200,outsource:150,royalty:0,showRoy:false,pct:7};
 
@@ -658,8 +658,6 @@ document.querySelectorAll('.sc-btn').forEach(b=>b.addEventListener('click',()=>s
 document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>setS('tab',b.dataset.tab)));
 function updateInvUI(){
   document.querySelectorAll('.inv-btn').forEach(b=>b.classList.toggle('on',+b.dataset.inv===INV_AMT));
-  const gva=(INIT_K-INV_AMT)/10;
-  document.getElementById('inv-total').textContent='¥'+gva.toFixed(1)+'万';
 }
 document.querySelectorAll('.inv-btn').forEach(b=>b.addEventListener('click',()=>{
   INV_AMT=+b.dataset.inv;
