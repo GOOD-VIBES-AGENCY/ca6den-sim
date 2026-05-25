@@ -1,826 +1,708 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CA6DEN 沖縄出店 投資家向けシミュレーション</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;900&display=swap" rel="stylesheet" />
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background: #f2f3f5;
-      color: #1a1f2e;
-      font-family: 'Noto Sans JP', sans-serif;
-      font-size: 13px;
-      min-height: 100vh;
-    }
-    input[type=range] { cursor: pointer; width: 100%; accent-color: #1b2f5c; }
-    button { cursor: pointer; font-family: 'Noto Sans JP', sans-serif; }
-    table { border-collapse: collapse; width: 100%; }
-    th, td { padding: 0; }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>CA6DEN 沖縄出店 — 投資家向けシミュレーション</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans JP',sans-serif;background:#f4f5f7;color:#1a1f2e;font-size:13px;min-height:100vh}
+a{color:inherit;text-decoration:none}
+table{border-collapse:collapse;width:100%}
+button{cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:all .15s}
+input[type=range]{width:100%;cursor:pointer;accent-color:#1b3a6b;height:4px;margin-top:2px}
+
+/* ── ヘッダー ── */
+#header{background:#1b3a6b;color:#fff;padding:18px 40px}
+#header-inner{display:flex;justify-content:space-between;align-items:flex-end}
+.header-eyebrow{font-size:10px;letter-spacing:.2em;color:#8aadde;margin-bottom:6px;font-weight:500}
+.header-title{font-size:22px;font-weight:900;letter-spacing:-.01em}
+.header-sub{font-size:10px;color:#6a94cc;margin-top:4px}
+.header-right{text-align:right;font-size:11px;color:#8aadde}
+.confidential{display:inline-block;background:#c9941a;color:#fff;font-size:10px;font-weight:700;padding:2px 10px;margin-top:6px;letter-spacing:.08em}
+
+/* ── シナリオバー ── */
+#scenario-bar{background:#e9ecf3;border-bottom:1px solid #d0d5e8;padding:10px 40px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.sc-label{font-size:11px;font-weight:600;color:#5a6a88}
+.sc-btn{padding:6px 18px;font-size:12px;font-weight:700;border:2px solid #c5cbdb;background:#fff;color:#5a6a88;border-radius:0}
+.sc-btn.active{border-color:var(--sc);background:var(--sc);color:#fff}
+.sc-note{font-size:11px;color:#5a6a88;margin-left:8px}
+
+/* ── タブ ── */
+#tabbar{background:#fff;border-bottom:1px solid #d8dce8;display:flex;padding:0 40px}
+.tab-btn{padding:13px 22px;font-size:12px;font-weight:600;background:none;border:none;color:#8a95b0;border-bottom:3px solid transparent}
+.tab-btn.active{color:#1b3a6b;border-bottom-color:#1b3a6b}
+
+/* ── コンテンツ ── */
+#main{padding:28px 40px;max-width:1060px}
+
+/* ── カード ── */
+.card{background:#fff;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.07);padding:22px 24px;margin-bottom:0}
+.card-title{font-size:11px;font-weight:700;color:#1b3a6b;letter-spacing:.1em;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid #1b3a6b}
+
+/* ── KPIグリッド ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.kpi-card{background:#fff;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.07);padding:16px 18px;border-top:3px solid var(--accent,#1b3a6b)}
+.kpi-label{font-size:10px;color:#7a8aaa;font-weight:600;letter-spacing:.04em;margin-bottom:6px}
+.kpi-value{font-size:22px;font-weight:900;color:var(--accent,#1b3a6b);line-height:1}
+.kpi-sub{font-size:10px;color:#9aa5be;margin-top:5px}
+
+/* ── テーブル共通 ── */
+.data-table th{background:#1b3a6b;color:#fff;padding:9px 14px;font-size:11px;font-weight:700;text-align:right;white-space:nowrap;border-right:1px solid #2d4e8a}
+.data-table th.left{text-align:left}
+.data-table td{padding:8px 14px;font-size:12px;border-bottom:1px solid #eef0f6;border-right:1px solid #eef0f6;text-align:right}
+.data-table td.left{text-align:left}
+.data-table tr:nth-child(even) td{background:#f8f9fc}
+.data-table tr:hover td{background:#f0f4ff}
+
+/* ── PL表 ── */
+.pl-table td{padding:6px 12px;font-size:11px;border-bottom:1px solid #f0f2f8}
+.pl-table td.left{text-align:left}
+.pl-table td.right{text-align:right}
+.pl-table .pl-bold td{font-weight:700;background:#eef1f8}
+.pl-table .pl-sub{font-size:9px;color:#9aa5be;margin-left:6px}
+.pl-subhead td{background:#e4e9f5;font-size:10px;font-weight:700;color:#1b3a6b;letter-spacing:.06em;padding:5px 12px}
+
+/* ── 2カラムグリッド ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-pl{display:grid;grid-template-columns:1.4fr 1fr;gap:16px}
+
+/* ── スライダーパネル ── */
+.slider-group{margin-bottom:12px}
+.slider-label{display:flex;justify-content:space-between;font-size:11px;color:#5a6a88;margin-bottom:3px}
+.slider-val{font-weight:700;color:#1b3a6b}
+.seg-btn{flex:1;padding:7px 0;font-size:12px;font-weight:700;border:2px solid #d0d5e8;background:#fff;color:#8a95b0;border-radius:0}
+.seg-btn.active{border-color:#1b3a6b;background:#1b3a6b;color:#fff}
+.panel-section{font-size:11px;font-weight:700;color:#5a6a88;margin:14px 0 8px;padding-bottom:4px;border-bottom:1px solid #eef0f6}
+
+/* ── チャート ── */
+.chart-legend{display:flex;gap:20px;font-size:10px;color:#7a8aaa;margin-bottom:8px}
+.legend-dot{width:24px;height:3px;display:inline-block;vertical-align:middle;margin-right:5px;border-radius:2px}
+
+/* ── ロイヤリティトグル ── */
+.royalty-btn{padding:4px 14px;font-size:10px;font-weight:700;border-radius:0;border:1px solid #15803d;background:#fff;color:#15803d}
+.royalty-btn.on{background:#15803d;color:#fff}
+
+/* ── 投資メリットカード ── */
+.merit-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.merit-card{background:#fff;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.07);padding:20px 22px;border-top:3px solid var(--mc,#1b3a6b)}
+.merit-no{font-size:26px;font-weight:900;color:var(--mc,#1b3a6b);line-height:1;margin-bottom:8px}
+.merit-title{font-size:13px;font-weight:700;color:var(--mc,#1b3a6b);margin-bottom:8px}
+.merit-body{font-size:11px;color:#4a5a7a;line-height:1.85}
+
+/* ── リスク ── */
+.risk-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:3px}
+
+/* ── フッター ── */
+#footer{border-top:1px solid #d8dce8;padding:12px 40px;background:#fff;display:flex;justify-content:space-between;font-size:10px;color:#9aa5be;margin-top:24px}
+
+/* ── カラー変数 ── */
+.pos{color:#15803d}.neg{color:#b91c1c}.navy{color:#1b3a6b}.gold{color:#c9941a}.blue{color:#1d4ed8}.purple{color:#6d28d9}
+.bg-pos{background:#f0fdf4}.bg-neg{background:#fef2f2}
+.warn-box{background:#fffbeb;border:1px solid #fcd34d;border-radius:6px;padding:12px 16px;font-size:11px;color:#78350f;line-height:1.8}
+.warn-title{font-size:11px;font-weight:700;color:#92400e;margin-bottom:4px}
+.info-box{background:#f0f4ff;border-left:4px solid #1b3a6b;border-radius:0 6px 6px 0;padding:16px 20px}
+
+/* ── セクション見出し ── */
+.section-heading{font-size:11px;font-weight:700;color:#1b3a6b;letter-spacing:.1em;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid #1b3a6b;display:flex;justify-content:space-between;align-items:center}
+
+/* ── ギャップ ── */
+.gap{display:flex;flex-direction:column;gap:20px}
+.gap-sm{display:flex;flex-direction:column;gap:12px}
+</style>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel">
-const { useState } = React;
 
-const RATES = { cogs: 0.1245, paymentFee: 0.0313, advertising: 0.0109 };
-const PROPERTY = { rent:350, deposit:700, agency:350, capex:15000, construction:525, term:5 };
-const DEPRE  = Math.round(PROPERTY.capex / PROPERTY.term / 12);
-const INIT_K = PROPERTY.capex + PROPERTY.deposit + PROPERTY.agency + PROPERTY.construction;
-const HOURS_MONTH = Math.round(24 * 365 / 12);
+<!-- ヘッダー -->
+<div id="header">
+  <div id="header-inner">
+    <div>
+      <div class="header-eyebrow">株式会社 GOOD VIBES AGENCY　|　機密資料</div>
+      <div class="header-title">CA6DEN 沖縄出店　投資家向けシミュレーション</div>
+      <div class="header-sub">Shisha cafe &amp; bar CA6DEN（運営：DearBrown）　国際通り徒歩5分　月額賃料¥35万　定借5年　24h年中無休</div>
+    </div>
+    <div class="header-right">
+      <div id="today-date"></div>
+      <div class="confidential">CONFIDENTIAL</div>
+    </div>
+  </div>
+</div>
 
-const SCENARIOS = [
-  { key:"bear",  label:"保守",   rev:3000,  color:"#b91c1c", note:"開業初期・認知前" },
-  { key:"base",  label:"ベース", rev:5000,  color:"#b45309", note:"軌道乗り・観光客定着" },
-  { key:"bull",  label:"強気",   rev:7702,  color:"#15803d", note:"DB六本木同等・送客フル稼働" },
-  { key:"super", label:"超強気", rev:10000, color:"#6d28d9", note:"VIPイベント常態化" },
-];
-const REPAY_RATES = [3,5,7,10,15];
+<!-- シナリオバー -->
+<div id="scenario-bar">
+  <span class="sc-label">シナリオ：</span>
+  <button class="sc-btn" data-sc="bear" style="--sc:#b91c1c">保守　¥300万/月</button>
+  <button class="sc-btn" data-sc="base" style="--sc:#c9941a">ベース　¥500万/月</button>
+  <button class="sc-btn" data-sc="bull" style="--sc:#15803d">強気　¥770万/月</button>
+  <button class="sc-btn" data-sc="super" style="--sc:#6d28d9">超強気　¥1,000万/月</button>
+  <span class="sc-note" id="sc-note"></span>
+</div>
 
-function calcPL({ rev, staffPerShift, partWage, managerCount, managerSalary,
-  socialInsRate, utilities, otherFixed, royaltyRate }) {
-  const cogs         = Math.round(rev * RATES.cogs);
-  const paymentFee   = Math.round(rev * RATES.paymentFee);
-  const advertising  = Math.round(rev * RATES.advertising);
-  const royalty      = Math.round(rev * royaltyRate);
-  const variableCost = cogs + paymentFee + advertising + royalty;
-  const grossProfit  = rev - cogs;
-  const grossMargin  = grossProfit / rev;
-  const limitProfit  = rev - variableCost;
-  const cmRate       = limitProfit / rev;
-  const partLabor    = Math.round(staffPerShift * partWage * HOURS_MONTH);
-  const managerLabor = Math.round(managerCount * managerSalary);
-  const socialIns    = Math.round(managerLabor * socialInsRate);
-  const totalLabor   = partLabor + managerLabor + socialIns;
-  const fixedCost    = totalLabor + PROPERTY.rent + DEPRE + utilities + otherFixed;
-  const totalCost    = variableCost + fixedCost;
-  const operatingProfit = rev - totalCost;
-  const operatingMargin = operatingProfit / rev;
-  const bep = cmRate > 0 ? Math.round(fixedCost / cmRate) : Infinity;
-  return {
-    rev, cogs, paymentFee, advertising, royalty, variableCost,
-    grossProfit, grossMargin, limitProfit, cmRate,
-    partLabor, managerLabor, socialIns, totalLabor,
-    utilities, otherFixed, fixedCost, totalCost,
-    operatingProfit, operatingMargin, laborRate: totalLabor/rev, bep,
-  };
-}
+<!-- タブ -->
+<div id="tabbar">
+  <button class="tab-btn" data-tab="summary">概要・投資メリット</button>
+  <button class="tab-btn" data-tab="pl">P&amp;L詳細</button>
+  <button class="tab-btn" data-tab="investor">投資家シミュレーション</button>
+  <button class="tab-btn" data-tab="scenario">シナリオ根拠</button>
+</div>
 
-const fM = k => {
-  if (!isFinite(k)) return "—";
-  const m = k / 10;
-  return m >= 0 ? `¥${m.toFixed(1)}万` : `▲¥${Math.abs(m).toFixed(1)}万`;
+<!-- メインコンテンツ -->
+<div id="main"></div>
+
+<!-- フッター -->
+<div id="footer">
+  <span>株式会社 GOOD VIBES AGENCY　|　CA6DEN 沖縄出店 投資家向けシミュレーション</span>
+  <span>本資料は投資検討用です。将来の収益を保証するものではありません。</span>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// 定数・計算
+// ══════════════════════════════════════════
+const RATES = {cogs:.1245, paymentFee:.0313, advertising:.0109};
+const RENT=350, CAPEX=15000, TERM=5;
+const DEPRE=Math.round(CAPEX/TERM/12); // 250
+const INIT_K=CAPEX+700+350+525; // 16575（施工中家賃含む★）
+const HOURS=Math.round(24*365/12); // 730
+
+const SCENARIOS={
+  bear: {label:'保守',   rev:3000,  color:'#b91c1c', note:'開業初期・認知前'},
+  base: {label:'ベース', rev:5000,  color:'#c9941a', note:'軌道乗り・観光客定着'},
+  bull: {label:'強気',   rev:7702,  color:'#15803d', note:'DB六本木同等・送客フル稼働'},
+  super:{label:'超強気', rev:10000, color:'#6d28d9', note:'VIPイベント常態化'},
 };
-const fP = v => isFinite(v) ? `${(v*100).toFixed(1)}%` : "—";
+const REPAY=[3,5,7,10,15];
 
-function App() {
-  const [scenario,      setScenario]      = useState("base");
-  const [staffPerShift, setStaffPerShift] = useState(1);
-  const [partWage,      setPartWage]      = useState(1.0);
-  const [managerCount,  setManagerCount]  = useState(1);
-  const [managerSalary, setManagerSalary] = useState(250);
-  const [utilities,     setUtilities]     = useState(175);
-  const [otherFixed,    setOtherFixed]    = useState(250);
-  const [royaltyRate,   setRoyaltyRate]   = useState(0);
-  const [showRoyalty,   setShowRoyalty]   = useState(false);
-  const [tab,           setTab]           = useState("summary");
-  const [displayPct,    setDisplayPct]    = useState(7);
+let S={
+  scenario:'base', tab:'summary',
+  staffPerShift:1, partWage:1.0,
+  managerCount:1,  managerSalary:250,
+  utilities:175,   otherFixed:250,
+  royaltyRate:0,   showRoyalty:false,
+  displayPct:7,
+};
 
-  const sc = SCENARIOS.find(s => s.key === scenario);
-  const pl = calcPL({ rev:sc.rev, staffPerShift, partWage, managerCount, managerSalary,
-    socialInsRate:0.15, utilities, otherFixed, royaltyRate });
-
-  const patterns = REPAY_RATES.map(pct => {
-    const payment  = Math.round(sc.rev * pct / 100);
-    const netCF    = pl.operatingProfit - payment;
-    const paybackM = payment > 0 ? Math.ceil(INIT_K / payment) : 999;
-    return { pct, payment, netCF, total36:payment*36, total60:payment*60, paybackM };
-  });
-  const dp = patterns.find(p => p.pct === displayPct) || patterns[2];
-
-  const chartData = Array.from({ length:36 }, (_,i) => ({
-    m: i+1, cumOP: pl.operatingProfit*(i+1), cumGVA: dp.payment*(i+1) - INIT_K,
-  }));
-
-  // ── スタイル ──
-  const navy  = "#1b2f5c";
-  const red   = "#b91c1c";
-  const green = "#15803d";
-  const gray  = "#64748b";
-  const line  = "#d1d5db";
-
-  const TH = ({ children, align="right", w }) => (
-    <th style={{ padding:"8px 12px", fontSize:11, fontWeight:700, color:"#fff",
-      background:navy, textAlign:align, whiteSpace:"nowrap",
-      borderRight:`1px solid #2d4a7a`, width:w||"auto" }}>{children}</th>
-  );
-  const TD = ({ children, color, bold, align="right", bg }) => (
-    <td style={{ padding:"8px 12px", fontSize:12, textAlign:align,
-      color:color||"#1a1f2e", fontWeight:bold?700:400,
-      borderBottom:`1px solid ${line}`, borderRight:`1px solid ${line}`,
-      background:bg||"transparent" }}>{children}</td>
-  );
-
-  const PLRow = ({ label, value, pct, bold, indent, color, sub }) => (
-    <tr style={{ background: bold ? "#eef1f8" : "transparent" }}>
-      <TD align="left" bold={bold}>
-        <span style={{ paddingLeft: indent?24:0, color: indent?"#374151":"#1a1f2e", fontSize:indent?11:12 }}>
-          {label}
-          {sub && <span style={{ fontSize:9, color:gray, marginLeft:6 }}>{sub}</span>}
-        </span>
-      </TD>
-      <TD color={gray}>{pct!==undefined ? fP(pct) : ""}</TD>
-      <TD color={color||(bold?navy:"#1a1f2e")} bold={bold}>{fM(value)}</TD>
-    </tr>
-  );
-
-  const SubHead = ({ text }) => (
-    <tr><td colSpan={3} style={{ background:"#e8edf5", padding:"5px 12px",
-      fontSize:10, fontWeight:700, color:navy, letterSpacing:"0.06em" }}>{text}</td></tr>
-  );
-
-  const Slider = ({ label, value, min, max, step, onChange, display }) => (
-    <div style={{ marginBottom:12 }}>
-      <div style={{ display:"flex", justifyContent:"space-between", fontSize:11, marginBottom:3 }}>
-        <span style={{ color:gray }}>{label}</span>
-        <span style={{ fontWeight:700, color:navy }}>{display}</span>
-      </div>
-      <input type="range" min={min} max={max} step={step} value={value} onChange={e=>onChange(+e.target.value)}/>
-    </div>
-  );
-
-  const ChartSVG = ({ data }) => {
-    const W=560, H=110, pad=20;
-    const vals=[...data.map(d=>d.cumOP),...data.map(d=>d.cumGVA),0];
-    const minV=Math.min(...vals), maxV=Math.max(...vals), range=maxV-minV||1;
-    const toX=i=>pad+(i/(data.length-1))*(W-pad*2);
-    const toY=v=>H-pad-((v-minV)/range)*(H-pad*2);
-    const pts=key=>data.map((d,i)=>`${toX(i)},${toY(d[key])}`).join(" ");
-    const zeroY=toY(0);
-    return (
-      <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{display:"block"}}>
-        <rect width={W} height={H} fill="#fafbfd"/>
-        {[0,1,2,3].map(i=>{
-          const y=pad+i*(H-pad*2)/3;
-          return <line key={i} x1={pad} y1={y} x2={W-pad} y2={y} stroke={line} strokeWidth={0.5}/>;
-        })}
-        <line x1={pad} y1={zeroY} x2={W-pad} y2={zeroY} stroke={gray} strokeWidth={1} strokeDasharray="5,3"/>
-        <polyline points={pts("cumOP")}  fill="none" stroke="#b45309" strokeWidth={2.5}/>
-        <polyline points={pts("cumGVA")} fill="none" stroke={navy}   strokeWidth={2.5}/>
-        {[6,12,18,24,30,36].map(m=>(
-          <text key={m} x={toX(m-1)} y={H-3} textAnchor="middle" fontSize={8} fill={gray} fontFamily="Noto Sans JP">M{m}</text>
-        ))}
-      </svg>
-    );
-  };
-
-  const tabs = [
-    ["summary","概要・投資メリット"],
-    ["pl","P&L詳細"],
-    ["investor","投資家シミュレーション"],
-    ["scenario","シナリオ根拠"],
-  ];
-
-  const today = new Date().toLocaleDateString("ja-JP",{year:"numeric",month:"long",day:"numeric"});
-
-  return (
-    <div style={{ background:"#f2f3f5", minHeight:"100vh" }}>
-
-      {/* ── ヘッダー ── */}
-      <div style={{ background:"#fff", borderBottom:`3px solid ${navy}`, padding:"16px 36px" }}>
-        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end" }}>
-          <div>
-            <div style={{ fontSize:11, color:gray, fontWeight:500, marginBottom:4, letterSpacing:"0.06em" }}>
-              株式会社GOOD VIBES AGENCY　｜　機密・社外秘
-            </div>
-            <div style={{ fontSize:22, fontWeight:900, color:navy, letterSpacing:"-0.01em" }}>
-              CA6DEN 沖縄出店　投資家向けシミュレーション
-            </div>
-            <div style={{ fontSize:11, color:gray, marginTop:4 }}>
-              Shisha cafe &amp; bar CA6DEN（運営：DearBrown）　国際通り徒歩5分　月額賃料¥35万　定借5年　24h年中無休
-            </div>
-          </div>
-          <div style={{ textAlign:"right", fontSize:11, color:gray }}>
-            <div>{today}</div>
-            <div style={{ marginTop:4 }}>
-              <span style={{ background:navy, color:"#fff", padding:"2px 10px", fontSize:11, fontWeight:700 }}>CONFIDENTIAL</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ── シナリオ選択バー ── */}
-      <div style={{ background:"#e8edf5", borderBottom:`1px solid ${line}`, padding:"10px 36px" }}>
-        <div style={{ display:"flex", alignItems:"center", gap:16 }}>
-          <span style={{ fontSize:11, color:gray, fontWeight:600, marginRight:4 }}>シナリオ選択：</span>
-          {SCENARIOS.map(s => (
-            <button key={s.key} onClick={() => setScenario(s.key)} style={{
-              padding:"5px 20px", fontSize:12, fontWeight:700,
-              border:`2px solid ${scenario===s.key ? s.color : line}`,
-              background: scenario===s.key ? s.color : "#fff",
-              color: scenario===s.key ? "#fff" : gray,
-              borderRadius:0,
-            }}>{s.label}　{fM(s.rev)}/月</button>
-          ))}
-          <span style={{ fontSize:11, color:sc.color, marginLeft:8, fontWeight:500 }}>— {sc.note}</span>
-        </div>
-      </div>
-
-      {/* ── タブ ── */}
-      <div style={{ background:"#fff", borderBottom:`1px solid ${line}`, display:"flex", padding:"0 36px" }}>
-        {tabs.map(([id,label]) => (
-          <button key={id} onClick={() => setTab(id)} style={{
-            padding:"12px 20px", fontSize:12, fontWeight:600,
-            background:"transparent", border:"none",
-            borderBottom: tab===id ? `3px solid ${navy}` : "3px solid transparent",
-            color: tab===id ? navy : gray,
-          }}>{label}</button>
-        ))}
-      </div>
-
-      <div style={{ padding:"28px 36px", maxWidth:1020 }}>
-
-        {/* ════ 概要・投資メリット ════ */}
-        {tab==="summary" && (
-          <div style={{ display:"flex", flexDirection:"column", gap:24 }}>
-
-            {/* エグゼクティブサマリー */}
-            <div style={{ background:"#fff", borderLeft:`5px solid ${navy}`, padding:"20px 24px" }}>
-              <div style={{ fontSize:11, fontWeight:700, color:navy, letterSpacing:"0.1em", marginBottom:10 }}>EXECUTIVE SUMMARY</div>
-              <div style={{ fontSize:15, fontWeight:700, color:"#1a1f2e", marginBottom:8 }}>
-                実績ある運営母体のFCモデルで、沖縄最高立地にシーシャバーを開業
-              </div>
-              <div style={{ fontSize:12, color:"#374151", lineHeight:1.9 }}>
-                CA6DEN（運営：株式会社DearBrown）の沖縄FC出店。店舗運営はGVA（GOOD VIBES AGENCY）が担当。<br/>
-                DearBrown六本木店は同業態・同客層で<strong>月平均770万円の売上を実現済み</strong>（第2期8ヶ月実績）。<br/>
-                GVAの富裕層コネクション × インフルエンサーネットワーク × 24h無休営業で、初月から集客を見込む。
-              </div>
-            </div>
-
-            {/* KPI */}
-            <div>
-              <div style={{ fontSize:11, fontWeight:700, color:navy, letterSpacing:"0.08em", marginBottom:12, paddingBottom:6, borderBottom:`2px solid ${navy}` }}>
-                ベースシナリオ（月次売上¥500万）主要指標
-              </div>
-              <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:1, background:line }}>
-                {(() => {
-                  const p = calcPL({ rev:5000, staffPerShift, partWage, managerCount, managerSalary, socialInsRate:0.15, utilities, otherFixed, royaltyRate });
-                  return [
-                    ["月次営業利益", fM(p.operatingProfit), fP(p.operatingMargin), p.operatingProfit>=0?green:red],
-                    ["損益分岐点", fM(p.bep), `達成率 ${fP(5000/p.bep)}`, navy],
-                    ["初期投資合計", fM(INIT_K), "施工中家賃含む★", "#92400e"],
-                    ["粗利益率", fP(p.grossMargin), "DB六本木実績ベース", "#1d4ed8"],
-                  ].map(([label,val,sub,color])=>(
-                    <div key={label} style={{ background:"#fff", padding:"16px 20px" }}>
-                      <div style={{ fontSize:10, color:gray, fontWeight:600, marginBottom:6, letterSpacing:"0.04em" }}>{label}</div>
-                      <div style={{ fontSize:22, fontWeight:900, color }}>{val}</div>
-                      <div style={{ fontSize:10, color:gray, marginTop:4 }}>{sub}</div>
-                    </div>
-                  ));
-                })()}
-              </div>
-            </div>
-
-            {/* 投資メリット */}
-            <div>
-              <div style={{ fontSize:11, fontWeight:700, color:navy, letterSpacing:"0.08em", marginBottom:12, paddingBottom:6, borderBottom:`2px solid ${navy}` }}>
-                投資メリット
-              </div>
-              <div style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:1, background:line }}>
-                {[
-                  { no:"01", title:"実績ベースのFCモデル", color:navy,
-                    body:"CA6DEN運営元のDearBrown（六本木）は同業態・同客層で月平均770万円を達成済み。検証済みのビジネスモデルをそのまま展開。FC加盟金は無償。" },
-                  { no:"02", title:"開業初日から送客できる", color:green,
-                    body:"GVAが保有する六本木富裕層・インフルエンサーネットワークを、沖縄旅行時に送客。プレオープン前からの認知形成が可能で、コールドスタートを回避できる。" },
-                  { no:"03", title:"沖縄ナイトシーンの最優立地", color:"#1d4ed8",
-                    body:"国際通り徒歩5分以内。観光客・地元富裕層・インバウンドの動線上に位置する希少立地。沖縄の夜間消費は那覇中心部に集中しており、競合参入障壁が高い。" },
-                  { no:"04", title:"24h無休による高稼働設計", color:"#92400e",
-                    body:"深夜〜早朝に稼働率が上がる業態特性を活かした24h運営。競合が閉まる時間帯の独占需要を取り込み、季節変動にも強いベース収益を確保する。" },
-                ].map(({ no,title,color,body }) => (
-                  <div key={no} style={{ background:"#fff", padding:"20px 24px" }}>
-                    <div style={{ display:"flex", alignItems:"flex-start", gap:16, marginBottom:10 }}>
-                      <div style={{ fontSize:24, fontWeight:900, color, lineHeight:1, minWidth:36 }}>{no}</div>
-                      <div style={{ fontSize:13, fontWeight:700, color, paddingTop:4 }}>{title}</div>
-                    </div>
-                    <div style={{ fontSize:11, color:"#374151", lineHeight:1.85, paddingLeft:52 }}>{body}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* 投資スキーム */}
-            <div>
-              <div style={{ fontSize:11, fontWeight:700, color:navy, letterSpacing:"0.08em", marginBottom:12, paddingBottom:6, borderBottom:`2px solid ${navy}` }}>
-                投資スキームと初期費用
-              </div>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:1, background:line }}>
-                <div style={{ background:"#fff", padding:"20px 24px" }}>
-                  <div style={{ fontSize:11, fontWeight:700, color:gray, marginBottom:12, letterSpacing:"0.06em" }}>初期投資内訳</div>
-                  <table style={{ width:"100%", borderCollapse:"collapse" }}>
-                    <tbody>
-                      {[
-                        ["内装・設備（フル施工）", "¥1,500万", false],
-                        ["礼金（2ヶ月分）", "¥70万", false],
-                        ["仲介手数料（1ヶ月分）", "¥35万", false],
-                        ["施工期間家賃（1.5ヶ月）★", "¥52.5万", true],
-                        ["FC加盟金", "¥0（無償）", false],
-                      ].map(([k,v,hl]) => (
-                        <tr key={k}>
-                          <td style={{ padding:"6px 0", borderBottom:`1px solid ${line}`, fontSize:11,
-                            color:hl?"#92400e":gray }}>{k}</td>
-                          <td style={{ padding:"6px 0", borderBottom:`1px solid ${line}`, fontSize:11,
-                            textAlign:"right", fontWeight:hl?700:400, color:hl?"#92400e":"#1a1f2e" }}>{v}</td>
-                        </tr>
-                      ))}
-                      <tr>
-                        <td style={{ padding:"8px 0", fontSize:13, fontWeight:700, color:navy }}>合計</td>
-                        <td style={{ padding:"8px 0", fontSize:13, fontWeight:700, color:navy, textAlign:"right" }}>¥{(INIT_K/10).toFixed(1)}万</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <div style={{ fontSize:10, color:gray, marginTop:8, lineHeight:1.7 }}>
-                    ★施工期間家賃：内装工事期間1.5ヶ月分を計上（35万×1.5）
-                  </div>
-                </div>
-                <div style={{ background:"#fff", padding:"20px 24px" }}>
-                  <div style={{ fontSize:11, fontWeight:700, color:gray, marginBottom:12, letterSpacing:"0.06em" }}>返済モデルの特徴（売上連動型）</div>
-                  {[
-                    ["返済方式", "月次売上の○%（売上連動）"],
-                    ["返済開始", "開業翌月から即時"],
-                    ["下方リスク", "売上が下がれば返済も自動で下がる"],
-                    ["上方メリット", "売上が上振れれば投資家への返済も増加"],
-                    ["GVAへのメリット", "固定返済なし・CF悪化時の負担軽減"],
-                  ].map(([k,v]) => (
-                    <div key={k} style={{ display:"flex", padding:"7px 0", borderBottom:`1px solid ${line}`, gap:12 }}>
-                      <span style={{ fontSize:11, color:gray, minWidth:120 }}>{k}</span>
-                      <span style={{ fontSize:11, color:"#1a1f2e", fontWeight:500 }}>{v}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* ベースシナリオ返済試算 */}
-            <div>
-              <div style={{ fontSize:11, fontWeight:700, color:navy, letterSpacing:"0.08em", marginBottom:12, paddingBottom:6, borderBottom:`2px solid ${navy}` }}>
-                ベースシナリオ（月次売上¥500万）返済試算早見表
-              </div>
-              <table>
-                <thead>
-                  <tr>
-                    <TH align="left">返済率</TH>
-                    <TH>月次返済額</TH>
-                    <TH>GVA手残りCF</TH>
-                    <TH>投資家回収期間</TH>
-                    <TH>36M累計</TH>
-                    <TH>60M累計</TH>
-                    <TH>判定</TH>
-                  </tr>
-                </thead>
-                <tbody>
-                  {REPAY_RATES.map((pct,i) => {
-                    const bPL  = calcPL({ rev:5000, staffPerShift, partWage, managerCount, managerSalary, socialInsRate:0.15, utilities, otherFixed, royaltyRate });
-                    const pay  = Math.round(5000 * pct / 100);
-                    const net  = bPL.operatingProfit - pay;
-                    const pb   = Math.ceil(INIT_K / pay);
-                    const good = net >= 0 && pb <= 48;
-                    const judge = !good ? (net<0?"❌ 赤字":"△ 長期") : pb<=36?"◎ 優良":"○ 可";
-                    const jc    = net<0?red : pb<=36?green : pb<=48?"#b45309":gray;
-                    return (
-                      <tr key={pct} style={{ background: i%2===0?"#fff":"#f8f9fc" }}>
-                        <TD align="left" bold><span style={{ color:navy }}>売上の{pct}%</span></TD>
-                        <TD bold>{fM(pay)}</TD>
-                        <TD color={net>=0?green:red} bold>{fM(net)}</TD>
-                        <TD color={pb<=36?green:pb<=48?"#b45309":gray}>{pb < 999 ? `${pb}ヶ月` : "—"}</TD>
-                        <TD>{fM(pay*36)}</TD>
-                        <TD>{fM(pay*60)}</TD>
-                        <TD color={jc} bold>{judge}</TD>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-
-            {/* リスク */}
-            <div>
-              <div style={{ fontSize:11, fontWeight:700, color:navy, letterSpacing:"0.08em", marginBottom:12, paddingBottom:6, borderBottom:`2px solid ${navy}` }}>
-                リスクと対応策
-              </div>
-              <table>
-                <thead>
-                  <tr>
-                    <TH align="left" w="22%">リスク項目</TH>
-                    <TH align="center" w="8%">深刻度</TH>
-                    <TH align="left">対応策</TH>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[
-                    { risk:"開業初期の売上未達", level:"中", lc:"#b45309", mitigation:"六本木顧客への事前告知・プレオープンイベントで初月から集客。売上連動返済のため、低売上時の返済額も自動で減少する。" },
-                    { risk:"季節変動・オフシーズン", level:"低", lc:green, mitigation:"沖縄の観光は年間を通じて安定。夏（7〜9月）と年末年始が繁忙期。24h営業×地元客で下支えされるため季節影響は限定的。" },
-                    { risk:"競合他社の参入", level:"中", lc:"#b45309", mitigation:"DearBrownブランド×六本木コネクション×GVAのインフルエンサーネットワークは模倣困難。国際通り近接の立地希少性も参入障壁となる。" },
-                    { risk:"人材確保・オペレーション", level:"中", lc:"#b45309", mitigation:"1〜2名オペで回る低人件費設計。沖縄はサービス業人材が豊富で最低賃金も本土比低水準。DearBrownのオペレーションノウハウをFC提供。" },
-                  ].map((r,i) => (
-                    <tr key={r.risk} style={{ background: i%2===0?"#fff":"#f8f9fc" }}>
-                      <TD align="left" bold><span style={{ color:navy }}>{r.risk}</span></TD>
-                      <TD align="center">
-                        <span style={{ background:r.lc+"20", color:r.lc, border:`1px solid ${r.lc}60`,
-                          padding:"1px 8px", fontSize:10, fontWeight:700 }}>{r.level}</span>
-                      </TD>
-                      <TD align="left"><span style={{ fontSize:11, color:"#374151" }}>{r.mitigation}</span></TD>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            <div style={{ background:"#fffbeb", border:`1px solid #fcd34d`, padding:"10px 16px" }}>
-              <span style={{ fontSize:10, fontWeight:700, color:"#92400e" }}>【免責事項】</span>
-              <span style={{ fontSize:10, color:"#78350f", marginLeft:6 }}>
-                本資料はCA6DEN運営元DearBrown六本木の実績データをベースとした投資検討用シミュレーションです。将来の収益を保証するものではありません。FC契約条件・ロイヤリティ等は現在交渉中であり、確定次第更新します。
-              </span>
-            </div>
-          </div>
-        )}
-
-        {/* ════ P&L詳細 ════ */}
-        {tab==="pl" && (
-          <div style={{ display:"flex", flexDirection:"column", gap:20 }}>
-            <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-              <span style={{ background:sc.color, color:"#fff", padding:"3px 12px", fontSize:12, fontWeight:700 }}>{sc.label}</span>
-              <span style={{ fontSize:13, color:sc.color, fontWeight:700 }}>{fM(sc.rev)}/月</span>
-              <span style={{ fontSize:12, color:gray }}>{sc.note}</span>
-            </div>
-
-            {/* KPI行 */}
-            <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:1, background:line }}>
-              {[
-                ["月次売上", fM(pl.rev), `年間換算 ${fM(pl.rev*12)}`, sc.color],
-                ["月次粗利益", fM(pl.grossProfit), `粗利率 ${fP(pl.grossMargin)}`, "#1d4ed8"],
-                ["月次営業利益", fM(pl.operatingProfit), `利益率 ${fP(pl.operatingMargin)}`, pl.operatingProfit>=0?green:red],
-                ["損益分岐点", fM(pl.bep), `達成率 ${fP(pl.rev/pl.bep)}`, "#6d28d9"],
-              ].map(([label,val,sub,color]) => (
-                <div key={label} style={{ background:"#fff", padding:"14px 18px" }}>
-                  <div style={{ fontSize:10, color:gray, fontWeight:600, marginBottom:6 }}>{label}</div>
-                  <div style={{ fontSize:20, fontWeight:900, color }}>{val}</div>
-                  <div style={{ fontSize:10, color:gray, marginTop:4 }}>{sub}</div>
-                </div>
-              ))}
-            </div>
-
-            <div style={{ display:"grid", gridTemplateColumns:"1.4fr 1fr", gap:1, background:line }}>
-              {/* P&L表 */}
-              <div style={{ background:"#fff" }}>
-                <div style={{ padding:"12px 16px", borderBottom:`1px solid ${line}`,
-                  fontSize:11, fontWeight:700, color:navy, letterSpacing:"0.06em" }}>
-                  月次損益計算書（沖縄想定）
-                </div>
-                <table>
-                  <thead>
-                    <tr>
-                      <TH align="left">科目</TH>
-                      <TH w="60px">比率</TH>
-                      <TH w="100px">金額</TH>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <PLRow label="売上高" value={pl.rev} pct={1} bold/>
-                    <SubHead text="変動費"/>
-                    <PLRow label="原材料費（DB実績12.5%・同業態）" value={pl.cogs} pct={RATES.cogs} indent/>
-                    <PLRow label="決済手数料" value={pl.paymentFee} pct={RATES.paymentFee} indent/>
-                    <PLRow label="広告宣伝費" value={pl.advertising} pct={RATES.advertising} indent/>
-                    {royaltyRate>0 && <PLRow label="ロイヤリティ（FC・交渉中）" value={pl.royalty} pct={royaltyRate} indent color={green}/>}
-                    <PLRow label="変動費 計" value={pl.variableCost} pct={pl.variableCost/pl.rev} bold/>
-                    <PLRow label="限界利益" value={pl.limitProfit} pct={pl.cmRate} bold color="#1d4ed8"/>
-                    <SubHead text="固定費"/>
-                    <PLRow label={`アルバイト（${staffPerShift}名×¥${(partWage*1000).toFixed(0)}/h×730h）`} value={pl.partLabor} pct={pl.partLabor/pl.rev} indent/>
-                    {managerCount>0 && <>
-                      <PLRow label={`社員給与（${managerCount}名）`} value={pl.managerLabor} pct={pl.managerLabor/pl.rev} indent/>
-                      <PLRow label="社会保険等（15%）" value={pl.socialIns} pct={pl.socialIns/pl.rev} indent/>
-                    </>}
-                    <PLRow label="人件費 計" value={pl.totalLabor} pct={pl.laborRate} bold/>
-                    <PLRow label="地代家賃（確定）" value={PROPERTY.rent} pct={PROPERTY.rent/pl.rev} indent color="#1d4ed8"/>
-                    <PLRow label="減価償却（1,500万÷5年÷12）" value={DEPRE} pct={DEPRE/pl.rev} indent/>
-                    <PLRow label="水道光熱費 ★24h・シーシャ実態値" value={pl.utilities} pct={pl.utilities/pl.rev} indent color="#92400e"/>
-                    <PLRow label="その他固定費 ★消耗品・修繕・保険含む" value={pl.otherFixed} pct={pl.otherFixed/pl.rev} indent color="#92400e"/>
-                    <PLRow label="固定費 計" value={pl.fixedCost} pct={pl.fixedCost/pl.rev} bold/>
-                    <PLRow label="営業利益" value={pl.operatingProfit} pct={pl.operatingMargin} bold color={pl.operatingProfit>=0?green:red}/>
-                  </tbody>
-                </table>
-                <div style={{ padding:"10px 14px", background:"#f8f9fc", borderTop:`1px solid ${line}`,
-                  fontSize:10, color:gray, lineHeight:1.8 }}>
-                  ★水道光熱費17.5万：24h・シーシャ炭火・沖縄高温環境を反映（旧設定10万から修正）<br/>
-                  ★その他固定費25万：消耗品・機材メンテ・ゴミ処理・保険含む（旧設定5万から修正）<br/>
-                  ★初期投資{fM(INIT_K)}に施工中家賃1.5ヶ月（¥52.5万）を計上済み
-                </div>
-              </div>
-
-              {/* 設定パネル */}
-              <div style={{ background:"#fff" }}>
-                <div style={{ padding:"12px 16px", borderBottom:`1px solid ${line}`,
-                  fontSize:11, fontWeight:700, color:navy, letterSpacing:"0.06em" }}>パラメータ設定</div>
-                <div style={{ padding:"16px" }}>
-                  <div style={{ fontSize:11, fontWeight:700, color:gray, marginBottom:10 }}>■ 人員設定（24h年中無休）</div>
-                  <div style={{ marginBottom:10 }}>
-                    <div style={{ fontSize:11, color:gray, marginBottom:6 }}>同時シフト人数</div>
-                    <div style={{ display:"flex", gap:6 }}>
-                      {[1,2].map(n => (
-                        <button key={n} onClick={() => setStaffPerShift(n)} style={{
-                          flex:1, padding:"7px 0", fontSize:12, fontWeight:700,
-                          border:`2px solid ${staffPerShift===n?navy:line}`,
-                          background: staffPerShift===n?navy:"#fff",
-                          color: staffPerShift===n?"#fff":gray, borderRadius:0,
-                        }}>{n}オペ</button>
-                      ))}
-                    </div>
-                  </div>
-                  <Slider label="時給（¥/h）" value={partWage} min={0.9} max={1.5} step={0.05} onChange={setPartWage} display={`¥${(partWage*1000).toFixed(0)}/h`}/>
-                  <div style={{ borderTop:`1px solid ${line}`, paddingTop:12, marginTop:4, marginBottom:12 }}>
-                    <Slider label="社員数" value={managerCount} min={0} max={3} step={1} onChange={setManagerCount} display={`${managerCount}名`}/>
-                    {managerCount>0 && <Slider label="社員月給（千円）" value={managerSalary} min={180} max={450} step={10} onChange={setManagerSalary} display={`¥${managerSalary}千`}/>}
-                  </div>
-                  <div style={{ fontSize:11, fontWeight:700, color:gray, marginBottom:10 }}>■ その他固定費（★実態ベース）</div>
-                  <Slider label="水道光熱費（24h・シーシャ炭火考慮）" value={utilities} min={100} max={400} step={25} onChange={setUtilities} display={fM(utilities)}/>
-                  <Slider label="その他固定費（消耗品・修繕・保険等）" value={otherFixed} min={50} max={500} step={25} onChange={setOtherFixed} display={fM(otherFixed)}/>
-                  <div style={{ borderTop:`1px solid ${line}`, paddingTop:12, marginTop:4 }}>
-                    <div style={{ fontSize:11, fontWeight:700, color:gray, marginBottom:10 }}>■ ロイヤリティ（FC・交渉中）</div>
-                    <button onClick={() => setShowRoyalty(!showRoyalty)} style={{
-                      padding:"4px 14px", fontSize:10, fontWeight:700, borderRadius:0,
-                      border:`1px solid ${green}`, background:showRoyalty?green:"#fff",
-                      color:showRoyalty?"#fff":green, marginBottom:showRoyalty?10:0
-                    }}>{showRoyalty?"▼ ON（交渉中）":"▶ 追加する（未確定）"}</button>
-                    {showRoyalty && (
-                      <div>
-                        <div style={{ fontSize:11, color:green, margin:"6px 0" }}>{fP(royaltyRate)} → {fM(pl.royalty)}/月</div>
-                        <input type="range" min={0} max={0.15} step={0.005} value={royaltyRate}
-                          onChange={e=>setRoyaltyRate(+e.target.value)} style={{ accentColor:green }}/>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* 全シナリオ比較 */}
-            <div style={{ background:"#fff" }}>
-              <div style={{ padding:"10px 16px", borderBottom:`1px solid ${line}`,
-                fontSize:11, fontWeight:700, color:navy, letterSpacing:"0.06em" }}>全シナリオ比較</div>
-              <table>
-                <thead>
-                  <tr>
-                    <TH align="left">シナリオ</TH>
-                    <TH>月次売上</TH><TH>粗利益</TH><TH>限界利益</TH>
-                    <TH>人件費</TH><TH>固定費計</TH>
-                    <TH>営業利益</TH><TH>利益率</TH><TH>BEP達成率</TH>
-                  </tr>
-                </thead>
-                <tbody>
-                  {SCENARIOS.map((s,i) => {
-                    const p = calcPL({ rev:s.rev, staffPerShift, partWage, managerCount, managerSalary, socialInsRate:0.15, utilities, otherFixed, royaltyRate });
-                    return (
-                      <tr key={s.key} onClick={() => setScenario(s.key)} style={{
-                        cursor:"pointer", background: scenario===s.key?s.color+"10":i%2===0?"#fff":"#f8f9fc" }}>
-                        <TD align="left" bold><span style={{ color:s.color }}>{s.label}</span></TD>
-                        <TD>{fM(p.rev)}</TD>
-                        <TD color="#1d4ed8">{fM(p.grossProfit)}</TD>
-                        <TD color="#1d4ed8">{fM(p.limitProfit)}</TD>
-                        <TD>{fM(p.totalLabor)}</TD>
-                        <TD>{fM(p.fixedCost)}</TD>
-                        <TD color={p.operatingProfit>=0?green:red} bold>{fM(p.operatingProfit)}</TD>
-                        <TD color={p.operatingProfit>=0?green:red}>{fP(p.operatingMargin)}</TD>
-                        <TD color="#6d28d9">{fP(p.rev/p.bep)}</TD>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        {/* ════ 投資家シミュレーション ════ */}
-        {tab==="investor" && (
-          <div style={{ display:"flex", flexDirection:"column", gap:20 }}>
-            <div style={{ fontSize:12, color:gray }}>
-              返済額 ＝ <strong style={{ color:"#1a1f2e" }}>月次売上 × ○%</strong>　｜　{sc.label}（{fM(sc.rev)}/月）
-              　営業利益：<strong style={{ color:pl.operatingProfit>=0?green:red }}>{fM(pl.operatingProfit)}/月</strong>
-            </div>
-
-            <div style={{ display:"flex", gap:6 }}>
-              {REPAY_RATES.map(pct=>(
-                <button key={pct} onClick={() => setDisplayPct(pct)} style={{
-                  padding:"6px 22px", fontSize:12, fontWeight:700, borderRadius:0,
-                  border:`2px solid ${displayPct===pct?navy:line}`,
-                  background: displayPct===pct?navy:"#fff",
-                  color: displayPct===pct?"#fff":gray,
-                }}>売上の{pct}%</button>
-              ))}
-            </div>
-
-            <div style={{ background:"#fff", borderTop:`3px solid ${navy}` }}>
-              <div style={{ padding:"12px 18px", borderBottom:`1px solid ${line}`, fontSize:11, fontWeight:700, color:navy }}>
-                売上{dp.pct}%プラン　月次返済額：{fM(dp.payment)}
-              </div>
-              <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:1, background:line }}>
-                {[
-                  ["月次返済額（投資家受取）", fM(dp.payment), `売上比 ${dp.pct}%`, navy],
-                  ["GVA手残りCF", fM(dp.netCF), "営業利益 − 返済額", dp.netCF>=0?green:red],
-                  ["投資家 回収期間", dp.paybackM<999?`${dp.paybackM}ヶ月`:"未回収",
-                    `¥${(INIT_K/10).toFixed(0)}万 ÷ ${fM(dp.payment)}/月`,
-                    dp.paybackM<=24?green:dp.paybackM<=48?"#b45309":red],
-                  ["60M累計返済", fM(dp.total60), `回収率 ${fP(dp.total60/INIT_K)}`, "#6d28d9"],
-                ].map(([label,val,sub,color]) => (
-                  <div key={label} style={{ background:"#fff", padding:"14px 18px" }}>
-                    <div style={{ fontSize:10, color:gray, fontWeight:600, marginBottom:6 }}>{label}</div>
-                    <div style={{ fontSize:20, fontWeight:900, color }}>{val}</div>
-                    <div style={{ fontSize:10, color:gray, marginTop:4 }}>{sub}</div>
-                  </div>
-                ))}
-              </div>
-              <div style={{ padding:"14px 18px" }}>
-                <div style={{ display:"flex", gap:20, fontSize:10, color:gray, marginBottom:8 }}>
-                  <span>— <span style={{ color:"#b45309", fontWeight:700 }}>GVA営業利益累計</span></span>
-                  <span>— <span style={{ color:navy, fontWeight:700 }}>投資家累計回収（初期投資控除後）</span></span>
-                </div>
-                <ChartSVG data={chartData}/>
-                {(() => {
-                  const bkM = chartData.findIndex(d=>d.cumGVA>=0);
-                  return bkM>=0
-                    ? <div style={{ fontSize:11, color:navy, marginTop:8, fontWeight:700 }}>▶ 投資家累計回収 黒字転換：M{bkM+1}</div>
-                    : <div style={{ fontSize:11, color:gray, marginTop:8 }}>▲ 36ヶ月以内に未回収</div>;
-                })()}
-              </div>
-            </div>
-
-            <div style={{ background:"#fff" }}>
-              <div style={{ padding:"10px 16px", borderBottom:`1px solid ${line}`, fontSize:11, fontWeight:700, color:navy }}>
-                全返済率パターン比較　｜　{sc.label}シナリオ（初期投資 ¥{(INIT_K/10).toFixed(0)}万）
-              </div>
-              <table>
-                <thead>
-                  <tr>
-                    <TH align="left">返済率</TH>
-                    <TH>月次返済額</TH><TH>GVA手残り</TH>
-                    <TH>投資家回収</TH><TH>36M累計</TH><TH>60M累計</TH><TH>判定</TH>
-                  </tr>
-                </thead>
-                <tbody>
-                  {patterns.map((p,i) => {
-                    const viable=p.netCF>=0, payOk=p.paybackM<=36;
-                    const judge=!viable?"❌ 赤字":payOk?"◎ 優良":p.paybackM<=60?"○ 可":"△ 長期";
-                    const jc=!viable?red:payOk?green:p.paybackM<=60?"#b45309":gray;
-                    return (
-                      <tr key={p.pct} onClick={()=>setDisplayPct(p.pct)} style={{
-                        cursor:"pointer", background:displayPct===p.pct?"#e8edf5":i%2===0?"#fff":"#f8f9fc" }}>
-                        <TD align="left" bold><span style={{ color:navy }}>売上{p.pct}%</span></TD>
-                        <TD bold>{fM(p.payment)}</TD>
-                        <TD color={p.netCF>=0?green:red} bold>{fM(p.netCF)}</TD>
-                        <TD color={payOk?green:gray}>{p.paybackM<999?`${p.paybackM}ヶ月`:"—"}</TD>
-                        <TD>{fM(p.total36)}</TD><TD>{fM(p.total60)}</TD>
-                        <TD color={jc} bold>{judge}</TD>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-
-            <div style={{ background:"#fff" }}>
-              <div style={{ padding:"10px 16px", borderBottom:`1px solid ${line}`, fontSize:11, fontWeight:700, color:navy }}>
-                GVA手残りCF マトリクス（全シナリオ × 全返済率）
-              </div>
-              <table>
-                <thead>
-                  <tr>
-                    <TH align="left">シナリオ</TH>
-                    {REPAY_RATES.map(p=><TH key={p}>売上{p}%</TH>)}
-                  </tr>
-                </thead>
-                <tbody>
-                  {SCENARIOS.map((s,i) => {
-                    const p = calcPL({ rev:s.rev, staffPerShift, partWage, managerCount, managerSalary, socialInsRate:0.15, utilities, otherFixed, royaltyRate });
-                    return (
-                      <tr key={s.key} style={{ background: i%2===0?"#fff":"#f8f9fc" }}>
-                        <TD align="left" bold><span style={{ color:s.color }}>{s.label} <span style={{ fontWeight:400, color:gray }}>{fM(s.rev)}/月</span></span></TD>
-                        {REPAY_RATES.map(pct => {
-                          const net = p.operatingProfit - Math.round(s.rev*pct/100);
-                          return <TD key={pct} color={net>=0?green:red} bold={net<0}>{fM(net)}</TD>;
-                        })}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        {/* ════ シナリオ根拠 ════ */}
-        {tab==="scenario" && (
-          <div style={{ display:"flex", flexDirection:"column", gap:20 }}>
-            {[
-              { sc:SCENARIOS[0], icon:"⚠",
-                factors:["開業直後・認知度ゼロの状態","六本木送客がまだ動いていない","地元客の獲得に時間がかかる段階","週末のみ賑わい、平日深夜は閑散"],
-                assumption:"1日平均売上 ¥10万。シャンパン3〜5本/日相当。" },
-              { sc:SCENARIOS[1], icon:"◎",
-                factors:["六本木常連が沖縄旅行時に来店し始める","SNSで拡散・観光客への認知が広まる","リピーターが定着してきた段階","週末はほぼ満席、平日もそこそこ入る"],
-                assumption:"1日平均売上 ¥16.4万。シャンパン8〜10本/日相当。" },
-              { sc:SCENARIOS[2], icon:"🎯",
-                factors:["六本木コネクション経由の送客が本格稼働","那覇の夜遊びの定番スポットとして定着","インバウンド富裕層の取り込み","VIP予約・ボトルキープが常態化"],
-                assumption:"1日平均売上 ¥25.7万。DearBrown六本木（CA6DEN運営元）第2期実績と同水準（月770万）。実証済みの数字。" },
-              { sc:SCENARIOS[3], icon:"🚀",
-                factors:["SNSバイラル・インフルエンサー来店で爆発的認知","シャンパンタワー・大型VIPイベントが月複数回","沖縄ナイトライフNo.1ブランドとして確立","観光シーズン（夏・年末年始）の超高単価月"],
-                assumption:"1日平均売上 ¥32.8万。週末だけで月売上の60%を達成するイメージ。" },
-            ].map(({ sc:s, icon, factors, assumption }) => {
-              const p = calcPL({ rev:s.rev, staffPerShift, partWage, managerCount, managerSalary, socialInsRate:0.15, utilities, otherFixed, royaltyRate });
-              return (
-                <div key={s.key} style={{ background:"#fff", borderLeft:`5px solid ${s.color}` }}>
-                  <div style={{ padding:"14px 20px", borderBottom:`1px solid ${line}`, display:"flex", justifyContent:"space-between" }}>
-                    <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-                      <span style={{ fontSize:20 }}>{icon}</span>
-                      <span style={{ color:s.color, fontWeight:700, fontSize:15 }}>{s.label}シナリオ</span>
-                      <span style={{ color:s.color, fontSize:13, fontWeight:700 }}>{fM(s.rev)}/月</span>
-                      <span style={{ color:gray, fontSize:11 }}>（年間 {fM(s.rev*12)}）</span>
-                    </div>
-                    <span style={{ background:s.color+"15", color:s.color, border:`1px solid ${s.color}50`,
-                      padding:"2px 12px", fontSize:10, fontWeight:700 }}>{s.note}</span>
-                  </div>
-                  <div style={{ padding:"16px 20px", display:"grid", gridTemplateColumns:"1fr 1fr", gap:20 }}>
-                    <div>
-                      <div style={{ fontSize:11, fontWeight:700, color:gray, marginBottom:8 }}>シナリオ前提</div>
-                      {factors.map((f,i) => (
-                        <div key={i} style={{ fontSize:11, color:"#374151", padding:"3px 0", borderBottom:`1px solid ${line}` }}>
-                          {i+1}. {f}
-                        </div>
-                      ))}
-                      <div style={{ marginTop:10, padding:"8px 12px", background:s.color+"0d",
-                        borderLeft:`3px solid ${s.color}`, fontSize:11, color:"#374151", lineHeight:1.7 }}>
-                        {assumption}
-                      </div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize:11, fontWeight:700, color:gray, marginBottom:8 }}>このシナリオでの試算</div>
-                      <table style={{ width:"100%" }}>
-                        <tbody>
-                          {[
-                            ["営業利益/月", fM(p.operatingProfit), p.operatingProfit>=0?green:red],
-                            ["営業利益率", fP(p.operatingMargin), p.operatingProfit>=0?green:red],
-                            ["BEP達成率", fP(p.rev/p.bep), "#6d28d9"],
-                            ["年間営業利益", fM(p.operatingProfit*12), p.operatingProfit>=0?green:red],
-                            ["損益分岐点", fM(p.bep), gray],
-                          ].map(([k,v,c]) => (
-                            <tr key={k}>
-                              <td style={{ padding:"5px 0", borderBottom:`1px solid ${line}`, fontSize:11, color:gray }}>{k}</td>
-                              <td style={{ padding:"5px 0", borderBottom:`1px solid ${line}`, fontSize:13, fontWeight:700, color:c, textAlign:"right" }}>{v}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-
-            <div style={{ background:"#fffbeb", border:`1px solid #fcd34d`, padding:"14px 18px" }}>
-              <div style={{ fontSize:11, fontWeight:700, color:"#92400e", marginBottom:8 }}>★ 修正済みコスト前提について</div>
-              <table style={{ width:"100%" }}>
-                <tbody>
-                  {[
-                    ["水道光熱費（17.5万/月）", "24h年中無休・シーシャ炭火使用・沖縄高温環境（冷房強化）を実態反映。旧設定10万から修正。"],
-                    ["その他固定費（25万/月）", "消耗品・シーシャ機材メンテ・ゴミ処理・損害保険等の実態値。旧設定5万から修正。"],
-                    ["施工期間家賃（52.5万）", "内装施工1.5ヶ月分を初期投資に計上済み（35万×1.5）。旧試算に未計上だったものを追加。"],
-                  ].map(([k,v]) => (
-                    <tr key={k}>
-                      <td style={{ padding:"6px 0", borderBottom:`1px solid #fde68a`, fontSize:11, fontWeight:700, color:"#92400e", width:"28%", paddingRight:12 }}>{k}</td>
-                      <td style={{ padding:"6px 0", borderBottom:`1px solid #fde68a`, fontSize:11, color:"#78350f" }}>{v}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* フッター */}
-      <div style={{ borderTop:`1px solid ${line}`, padding:"12px 36px", background:"#fff",
-        display:"flex", justifyContent:"space-between", fontSize:10, color:gray, marginTop:20 }}>
-        <span>株式会社GOOD VIBES AGENCY　｜　CA6DEN 沖縄出店 投資家向けシミュレーション</span>
-        <span>本資料は投資検討用です。将来の収益を保証するものではありません。</span>
-      </div>
-    </div>
-  );
+function calcPL(rev){
+  const cogs=Math.round(rev*RATES.cogs);
+  const payFee=Math.round(rev*RATES.paymentFee);
+  const adv=Math.round(rev*RATES.advertising);
+  const royalty=Math.round(rev*S.royaltyRate);
+  const varCost=cogs+payFee+adv+royalty;
+  const grossP=rev-cogs;
+  const limitP=rev-varCost;
+  const cmRate=limitP/rev;
+  const partL=Math.round(S.staffPerShift*S.partWage*HOURS);
+  const mgrL=Math.round(S.managerCount*S.managerSalary);
+  const socL=Math.round(mgrL*.15);
+  const labor=partL+mgrL+socL;
+  const fixedCost=labor+RENT+DEPRE+S.utilities+S.otherFixed;
+  const totalCost=varCost+fixedCost;
+  const opP=rev-totalCost;
+  const bep=cmRate>0?Math.round(fixedCost/cmRate):Infinity;
+  return {rev,cogs,payFee,adv,royalty,varCost,grossP,limitP,cmRate,
+    partL,mgrL,socL,labor,fixedCost,totalCost,opP,bep,
+    grossM:grossP/rev, opM:opP/rev, laborR:labor/rev};
 }
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(React.createElement(App));
+const fM=k=>{if(!isFinite(k))return'—';const m=k/10;return m>=0?`¥${m.toFixed(1)}万`:`▲¥${Math.abs(m).toFixed(1)}万`};
+const fP=v=>isFinite(v)?`${(v*100).toFixed(1)}%`:'—';
+const clr=v=>v>=0?'#15803d':'#b91c1c';
+const clrCls=v=>v>=0?'pos':'neg';
+
+// ══════════════════════════════════════════
+// SVGチャート
+// ══════════════════════════════════════════
+function makeChart(pl,dp){
+  const data=Array.from({length:36},(_,i)=>({
+    cumOP:pl.opP*(i+1), cumGVA:dp.payment*(i+1)-INIT_K
+  }));
+  const W=560,H=120,pad=20;
+  const vals=[...data.map(d=>d.cumOP),...data.map(d=>d.cumGVA),0];
+  const minV=Math.min(...vals),maxV=Math.max(...vals),range=maxV-minV||1;
+  const toX=i=>pad+(i/(data.length-1))*(W-pad*2);
+  const toY=v=>H-pad-((v-minV)/range)*(H-pad*2);
+  const pts=key=>data.map((d,i)=>`${toX(i)},${toY(d[key])}`).join(' ');
+  const zeroY=toY(0);
+  const bkM=data.findIndex(d=>d.cumGVA>=0);
+  let bkLine='';
+  if(bkM>=0){
+    const bx=toX(bkM);
+    bkLine=`<line x1="${bx}" y1="${pad}" x2="${bx}" y2="${H-pad}" stroke="#1b3a6b" stroke-width="1" stroke-dasharray="3,2"/>
+    <text x="${bx+4}" y="${pad+10}" font-size="8" fill="#1b3a6b" font-family="Noto Sans JP">M${bkM+1}回収</text>`;
+  }
+  return `<svg width="100%" viewBox="0 0 ${W} ${H}" style="display:block;background:#fafbfd;border-radius:4px">
+    <rect width="${W}" height="${H}" fill="#fafbfd"/>
+    ${[0,1,2,3].map(i=>{const y=pad+i*(H-pad*2)/3;return`<line x1="${pad}" y1="${y}" x2="${W-pad}" y2="${y}" stroke="#e8eaf0" stroke-width="0.5"/>`;}).join('')}
+    <line x1="${pad}" y1="${zeroY}" x2="${W-pad}" y2="${zeroY}" stroke="#9aa5be" stroke-width="1" stroke-dasharray="5,3"/>
+    ${bkLine}
+    <polyline points="${pts('cumOP')}" fill="none" stroke="#c9941a" stroke-width="2.5" stroke-linejoin="round"/>
+    <polyline points="${pts('cumGVA')}" fill="none" stroke="#1b3a6b" stroke-width="2.5" stroke-linejoin="round"/>
+    ${[6,12,18,24,30,36].map(m=>`<text x="${toX(m-1)}" y="${H-3}" text-anchor="middle" font-size="8" fill="#9aa5be" font-family="Noto Sans JP">M${m}</text>`).join('')}
+  </svg>
+  ${bkM>=0?`<div style="font-size:11px;font-weight:700;color:#1b3a6b;margin-top:6px">▶ 投資家累計回収 黒字転換：M${bkM+1}</div>`:'<div style="font-size:11px;color:#9aa5be;margin-top:6px">▲ 36ヶ月以内に未回収</div>'}`;
+}
+
+// ══════════════════════════════════════════
+// タブコンテンツ生成
+// ══════════════════════════════════════════
+function renderSummary(sc,pl){
+  const bPL=calcPL(5000);
+  const kpis=[
+    {label:'月次営業利益',val:fM(bPL.opP),sub:`利益率 ${fP(bPL.opM)}（ベース）`,accent:clr(bPL.opP)},
+    {label:'損益分岐点',val:fM(bPL.bep),sub:`達成率 ${fP(5000/bPL.bep)}（ベース）`,accent:'#1b3a6b'},
+    {label:'初期投資合計',val:fM(INIT_K),sub:'施工中家賃1.5ヶ月含む ★',accent:'#c9941a'},
+    {label:'粗利益率',val:fP(bPL.grossM),sub:'DB六本木実績ベース（同業態）',accent:'#1d4ed8'},
+  ];
+  const merits=[
+    {no:'01',title:'実績ベースのFCモデル',color:'#1b3a6b',
+     body:'CA6DEN運営元のDearBrown（六本木）は同業態・同客層で月平均770万円を達成済み。検証済みのビジネスモデルをそのまま展開。FC加盟金は無償。'},
+    {no:'02',title:'開業初日から送客できる',color:'#15803d',
+     body:'GVAが保有する六本木富裕層・インフルエンサーネットワークを沖縄旅行時に送客。プレオープン前からの認知形成が可能で、コールドスタートを回避できる。'},
+    {no:'03',title:'沖縄ナイトシーンの最優立地',color:'#1d4ed8',
+     body:'国際通り徒歩5分以内。観光客・地元富裕層・インバウンドの動線上に位置する希少立地。沖縄の夜間消費は那覇中心部に集中しており、競合参入障壁が高い。'},
+    {no:'04',title:'24h無休による高稼働設計',color:'#c9941a',
+     body:'深夜〜早朝に稼働率が上がる業態特性を活かした24h運営。競合が閉まる時間帯の独占需要を取り込み、季節変動にも強いベース収益を確保する。'},
+  ];
+  const risks=[
+    {risk:'開業初期の売上未達',level:'中',lc:'#c9941a',
+     mit:'六本木顧客への事前告知・プレオープンイベントで初月から集客。売上連動返済のため、低売上時の返済額も自動で減少する。'},
+    {risk:'季節変動・オフシーズン',level:'低',lc:'#15803d',
+     mit:'沖縄の観光は年間を通じて安定。夏（7〜9月）と年末年始が繁忙期。24h営業×地元客で下支えされるため季節影響は限定的。'},
+    {risk:'競合他社の参入',level:'中',lc:'#c9941a',
+     mit:'DearBrownブランド×六本木コネクション×GVAのインフルエンサーネットワークは模倣困難。国際通り近接の立地希少性も参入障壁となる。'},
+    {risk:'人材確保・オペレーション',level:'中',lc:'#c9941a',
+     mit:'1〜2名オペで回る低人件費設計。沖縄はサービス業人材が豊富。DearBrownのオペレーションノウハウをFC提供。'},
+  ];
+  const bRows=REPAY.map(pct=>{
+    const pay=Math.round(5000*pct/100);
+    const net=bPL.opP-pay;
+    const pb=Math.ceil(INIT_K/pay);
+    const good=net>=0&&pb<=48;
+    const judge=net<0?'❌ 赤字':pb<=36?'◎ 優良':pb<=48?'○ 可':'△ 長期';
+    const jc=net<0?'#b91c1c':pb<=36?'#15803d':pb<=48?'#c9941a':'#8a95b0';
+    return `<tr>
+      <td class="left" style="font-weight:700;color:#1b3a6b">売上の${pct}%</td>
+      <td style="font-weight:700">${fM(pay)}</td>
+      <td style="color:${clr(net)};font-weight:700">${fM(net)}</td>
+      <td style="color:${pb<=36?'#15803d':pb<=48?'#c9941a':'#8a95b0'}">${pb}ヶ月</td>
+      <td>${fM(pay*36)}</td><td>${fM(pay*60)}</td>
+      <td style="color:${jc};font-weight:700">${judge}</td>
+    </tr>`;
+  }).join('');
+
+  return `<div class="gap">
+    <div class="info-box">
+      <div style="font-size:11px;font-weight:700;color:#1b3a6b;letter-spacing:.1em;margin-bottom:8px">EXECUTIVE SUMMARY</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:8px">実績ある運営母体のFCモデルで、沖縄最高立地にシーシャバーを開業</div>
+      <div style="font-size:12px;color:#374151;line-height:1.9">
+        CA6DEN（運営：株式会社DearBrown）の沖縄FC出店。店舗運営はGVA（GOOD VIBES AGENCY）が担当。<br>
+        DearBrown六本木店は同業態・同客層で<strong>月平均770万円の売上を実現済み</strong>（第2期8ヶ月実績）。<br>
+        GVAの富裕層コネクション × インフルエンサーネットワーク × 24h無休営業で、初月から集客を見込む。
+      </div>
+    </div>
+
+    <div>
+      <div class="section-heading">ベースシナリオ（月次売上¥500万）主要指標</div>
+      <div class="kpi-grid">${kpis.map(k=>`<div class="kpi-card" style="--accent:${k.accent}">
+        <div class="kpi-label">${k.label}</div>
+        <div class="kpi-value">${k.val}</div>
+        <div class="kpi-sub">${k.sub}</div>
+      </div>`).join('')}</div>
+    </div>
+
+    <div>
+      <div class="section-heading">投資メリット</div>
+      <div class="merit-grid">${merits.map(m=>`<div class="merit-card" style="--mc:${m.color}">
+        <div class="merit-no">${m.no}</div>
+        <div class="merit-title">${m.title}</div>
+        <div class="merit-body">${m.body}</div>
+      </div>`).join('')}</div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">初期投資内訳</div>
+        <table>
+          <tbody>
+            ${[['内装・設備（フル施工）','¥1,500万',''],['礼金（2ヶ月分）','¥70万',''],['仲介手数料（1ヶ月分）','¥35万',''],['施工期間家賃（1.5ヶ月）★','¥52.5万','gold'],['FC加盟金','¥0（無償）','pos']].map(([k,v,cls])=>`
+            <tr><td style="padding:7px 0;border-bottom:1px solid #eef0f6;font-size:12px;color:#5a6a88">${k}</td>
+                <td style="padding:7px 0;border-bottom:1px solid #eef0f6;font-size:12px;text-align:right;font-weight:${cls?700:400}" class="${cls}">${v}</td></tr>`).join('')}
+            <tr><td style="padding:9px 0;font-size:14px;font-weight:700;color:#1b3a6b">合計</td>
+                <td style="padding:9px 0;font-size:14px;font-weight:700;text-align:right;color:#1b3a6b">¥${(INIT_K/10).toFixed(1)}万</td></tr>
+          </tbody>
+        </table>
+        <div style="font-size:10px;color:#9aa5be;margin-top:8px;line-height:1.7">★施工期間家賃：内装工事期間1.5ヶ月分を計上（35万×1.5）</div>
+      </div>
+      <div class="card">
+        <div class="card-title">返済モデルの特徴（売上連動型）</div>
+        ${[['返済方式','月次売上の○%（売上連動）'],['返済開始','開業翌月から即時'],['下方リスク','売上が下がれば返済も自動で下がる'],['上方メリット','売上が上振れれば投資家への返済も増加'],['GVAのメリット','固定返済なし・CF悪化時の負担軽減']].map(([k,v])=>`
+          <div style="display:flex;padding:7px 0;border-bottom:1px solid #eef0f6;gap:12px">
+            <span style="font-size:11px;color:#8a95b0;min-width:110px">${k}</span>
+            <span style="font-size:11px;font-weight:500">${v}</span>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">ベースシナリオ（月次売上¥500万）返済試算早見表</div>
+      <table class="data-table">
+        <thead><tr>
+          <th class="left">返済率</th><th>月次返済額</th><th>GVA手残りCF</th>
+          <th>投資家回収期間</th><th>36M累計</th><th>60M累計</th><th>判定</th>
+        </tr></thead>
+        <tbody>${bRows}</tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">リスクと対応策</div>
+      <table class="data-table">
+        <thead><tr>
+          <th class="left" style="width:22%">リスク項目</th>
+          <th style="width:8%">深刻度</th>
+          <th class="left">対応策</th>
+        </tr></thead>
+        <tbody>${risks.map((r,i)=>`<tr>
+          <td class="left" style="font-weight:700;color:#1b3a6b">${r.risk}</td>
+          <td style="text-align:center"><span class="risk-badge" style="background:${r.lc}20;color:${r.lc};border:1px solid ${r.lc}60">${r.level}</span></td>
+          <td class="left" style="font-size:11px;color:#374151;line-height:1.75">${r.mit}</td>
+        </tr>`).join('')}</tbody>
+      </table>
+    </div>
+
+    <div class="warn-box"><span style="font-weight:700;color:#92400e">【免責事項】</span>　本資料はCA6DEN運営元DearBrown六本木の実績データをベースとした投資検討用シミュレーションです。将来の収益を保証するものではありません。FC契約条件・ロイヤリティ等は現在交渉中であり、確定次第更新します。</div>
+  </div>`;
+}
+
+function renderPL(sc,pl){
+  const kpis=[
+    {label:'月次売上',val:fM(pl.rev),sub:`年間換算 ${fM(pl.rev*12)}`,accent:sc.color},
+    {label:'月次粗利益',val:fM(pl.grossP),sub:`粗利率 ${fP(pl.grossM)}`,accent:'#1d4ed8'},
+    {label:'月次営業利益',val:fM(pl.opP),sub:`利益率 ${fP(pl.opM)}`,accent:clr(pl.opP)},
+    {label:'損益分岐点',val:fM(pl.bep),sub:`達成率 ${fP(pl.rev/pl.bep)}`,accent:'#6d28d9'},
+  ];
+  const scRows=Object.entries(SCENARIOS).map(([key,s],i)=>{
+    const p=calcPL(s.rev);
+    return`<tr style="cursor:pointer;background:${S.scenario===key?s.color+'15':i%2===0?'#fff':'#f8f9fc'}" onclick="setState('scenario','${key}')">
+      <td class="left" style="font-weight:700;color:${s.color}">${s.label}</td>
+      <td>${fM(p.rev)}</td><td style="color:#1d4ed8">${fM(p.grossP)}</td>
+      <td style="color:#1d4ed8">${fM(p.limitP)}</td><td>${fM(p.labor)}</td>
+      <td>${fM(p.fixedCost)}</td>
+      <td style="color:${clr(p.opP)};font-weight:700">${fM(p.opP)}</td>
+      <td style="color:${clr(p.opP)}">${fP(p.opM)}</td>
+      <td style="color:#6d28d9">${fP(p.rev/p.bep)}</td>
+    </tr>`;
+  }).join('');
+
+  return`<div class="gap">
+    <div style="display:inline-flex;align-items:center;gap:12px;padding:7px 16px;border-radius:4px;background:${sc.color}18;border:1px solid ${sc.color}40">
+      <span style="color:${sc.color};font-weight:700;font-size:14px">${sc.label}　${fM(pl.rev)}/月</span>
+      <span style="color:#8a95b0;font-size:12px">${sc.note}</span>
+    </div>
+
+    <div class="kpi-grid">${kpis.map(k=>`<div class="kpi-card" style="--accent:${k.accent}">
+      <div class="kpi-label">${k.label}</div><div class="kpi-value">${k.val}</div><div class="kpi-sub">${k.sub}</div>
+    </div>`).join('')}</div>
+
+    <div class="grid-pl">
+      <div class="card" style="padding:0;overflow:hidden">
+        <div style="padding:14px 18px;border-bottom:1px solid #eef0f6;font-size:11px;font-weight:700;color:#1b3a6b;letter-spacing:.08em">月次損益計算書（沖縄想定）</div>
+        <table class="pl-table" style="width:100%">
+          <thead><tr style="background:#e4e9f5">
+            <th style="padding:7px 12px;text-align:left;font-size:10px;font-weight:700;color:#1b3a6b;letter-spacing:.06em">科目</th>
+            <th style="padding:7px 12px;text-align:right;font-size:10px;font-weight:700;color:#1b3a6b;width:60px">比率</th>
+            <th style="padding:7px 12px;text-align:right;font-size:10px;font-weight:700;color:#1b3a6b;width:100px">金額</th>
+          </tr></thead>
+          <tbody>
+            <tr class="pl-bold"><td class="left">売上高</td><td class="right" style="color:#8a95b0">${fP(1)}</td><td class="right navy">${fM(pl.rev)}</td></tr>
+            <tr class="pl-subhead"><td colspan="3">変動費</td></tr>
+            <tr><td class="left" style="padding-left:22px;color:#5a6a88">原材料費（DB実績12.5%・同業態）</td><td class="right" style="color:#9aa5be">${fP(RATES.cogs)}</td><td class="right">${fM(pl.cogs)}</td></tr>
+            <tr><td class="left" style="padding-left:22px;color:#5a6a88">決済手数料</td><td class="right" style="color:#9aa5be">${fP(RATES.paymentFee)}</td><td class="right">${fM(pl.payFee)}</td></tr>
+            <tr><td class="left" style="padding-left:22px;color:#5a6a88">広告宣伝費</td><td class="right" style="color:#9aa5be">${fP(RATES.advertising)}</td><td class="right">${fM(pl.adv)}</td></tr>
+            ${S.royaltyRate>0?`<tr><td class="left" style="padding-left:22px;color:#15803d">ロイヤリティ（FC・交渉中）</td><td class="right" style="color:#9aa5be">${fP(S.royaltyRate)}</td><td class="right pos">${fM(pl.royalty)}</td></tr>`:''}
+            <tr class="pl-bold"><td class="left">変動費 計</td><td class="right" style="color:#8a95b0">${fP(pl.varCost/pl.rev)}</td><td class="right navy">${fM(pl.varCost)}</td></tr>
+            <tr class="pl-bold"><td class="left" style="color:#1d4ed8">限界利益</td><td class="right" style="color:#8a95b0">${fP(pl.cmRate)}</td><td class="right blue">${fM(pl.limitP)}</td></tr>
+            <tr class="pl-subhead"><td colspan="3">固定費</td></tr>
+            <tr><td class="left" style="padding-left:22px;color:#5a6a88">アルバイト（${S.staffPerShift}名×¥${(S.partWage*1000).toFixed(0)}/h×730h）</td><td class="right" style="color:#9aa5be">${fP(pl.partL/pl.rev)}</td><td class="right">${fM(pl.partL)}</td></tr>
+            ${S.managerCount>0?`<tr><td class="left" style="padding-left:22px;color:#5a6a88">社員給与（${S.managerCount}名）</td><td class="right" style="color:#9aa5be">${fP(pl.mgrL/pl.rev)}</td><td class="right">${fM(pl.mgrL)}</td></tr>
+            <tr><td class="left" style="padding-left:22px;color:#5a6a88">社会保険等（15%）</td><td class="right" style="color:#9aa5be">${fP(pl.socL/pl.rev)}</td><td class="right">${fM(pl.socL)}</td></tr>`:''}
+            <tr class="pl-bold"><td class="left">人件費 計</td><td class="right" style="color:#8a95b0">${fP(pl.laborR)}</td><td class="right navy">${fM(pl.labor)}</td></tr>
+            <tr><td class="left" style="padding-left:22px;color:#1d4ed8">地代家賃（確定）</td><td class="right" style="color:#9aa5be">${fP(RENT/pl.rev)}</td><td class="right blue">${fM(RENT)}</td></tr>
+            <tr><td class="left" style="padding-left:22px;color:#5a6a88">減価償却（1,500万÷5年÷12）</td><td class="right" style="color:#9aa5be">${fP(DEPRE/pl.rev)}</td><td class="right">${fM(DEPRE)}</td></tr>
+            <tr><td class="left" style="padding-left:22px;color:#c9941a">水道光熱費 ★24h・シーシャ実態値</td><td class="right" style="color:#9aa5be">${fP(pl.utilities/pl.rev)}</td><td class="right gold">${fM(pl.utilities)}</td></tr>
+            <tr><td class="left" style="padding-left:22px;color:#c9941a">その他固定費 ★消耗品・修繕・保険含む</td><td class="right" style="color:#9aa5be">${fP(pl.otherFixed/pl.rev)}</td><td class="right gold">${fM(pl.otherFixed)}</td></tr>
+            <tr class="pl-bold"><td class="left">固定費 計</td><td class="right" style="color:#8a95b0">${fP(pl.fixedCost/pl.rev)}</td><td class="right navy">${fM(pl.fixedCost)}</td></tr>
+            <tr style="background:#e8f5e9"><td class="left" style="font-weight:700;font-size:13px;color:${clr(pl.opP)}">営業利益</td><td class="right" style="color:#8a95b0">${fP(pl.opM)}</td><td class="right" style="font-weight:700;font-size:14px;color:${clr(pl.opP)}">${fM(pl.opP)}</td></tr>
+          </tbody>
+        </table>
+        <div style="padding:10px 14px;background:#fafbfd;font-size:10px;color:#8a95b0;line-height:1.8;border-top:1px solid #eef0f6">
+          ★水道光熱費17.5万：24h・シーシャ炭火・沖縄高温環境を反映（旧設定10万から修正）<br>
+          ★その他固定費25万：消耗品・機材メンテ・ゴミ処理・保険含む（旧設定5万から修正）<br>
+          ★初期投資${fM(INIT_K)}に施工中家賃1.5ヶ月（¥52.5万）を計上済み
+        </div>
+      </div>
+
+      <div class="gap-sm">
+        <div class="card">
+          <div class="card-title">人員設定（24h年中無休）</div>
+          <div style="margin-bottom:12px">
+            <div style="font-size:11px;color:#8a95b0;margin-bottom:6px">同時シフト人数</div>
+            <div style="display:flex;gap:6px">
+              <button class="seg-btn${S.staffPerShift===1?' active':''}" onclick="setState('staffPerShift',1)">1オペ</button>
+              <button class="seg-btn${S.staffPerShift===2?' active':''}" onclick="setState('staffPerShift',2)">2オペ</button>
+            </div>
+          </div>
+          <div class="slider-group">
+            <div class="slider-label"><span>時給（¥/h）</span><span class="slider-val">¥${(S.partWage*1000).toFixed(0)}/h</span></div>
+            <input type="range" min="0.9" max="1.5" step="0.05" value="${S.partWage}" oninput="setState('partWage',+this.value)">
+          </div>
+          <div style="border-top:1px solid #eef0f6;padding-top:10px">
+            <div class="slider-group">
+              <div class="slider-label"><span>社員数</span><span class="slider-val">${S.managerCount}名</span></div>
+              <input type="range" min="0" max="3" step="1" value="${S.managerCount}" oninput="setState('managerCount',+this.value)">
+            </div>
+            ${S.managerCount>0?`<div class="slider-group">
+              <div class="slider-label"><span>社員月給</span><span class="slider-val">¥${S.managerSalary}千</span></div>
+              <input type="range" min="180" max="450" step="10" value="${S.managerSalary}" oninput="setState('managerSalary',+this.value)">
+            </div>`:''}
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">その他固定費 ★実態ベース</div>
+          <div class="slider-group">
+            <div class="slider-label"><span>水道光熱費（24h・シーシャ炭火）</span><span class="slider-val">${fM(S.utilities)}</span></div>
+            <input type="range" min="100" max="400" step="25" value="${S.utilities}" oninput="setState('utilities',+this.value)">
+          </div>
+          <div class="slider-group">
+            <div class="slider-label"><span>その他固定費（消耗品・修繕・保険）</span><span class="slider-val">${fM(S.otherFixed)}</span></div>
+            <input type="range" min="50" max="500" step="25" value="${S.otherFixed}" oninput="setState('otherFixed',+this.value)">
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">初期投資（確定値）★修正済</div>
+          ${[['内装・設備','¥1,500万',''],['礼金（2ヶ月）','¥70万',''],['仲介（1ヶ月）','¥35万',''],['施工中家賃★','¥52.5万','gold'],['FC加盟金','¥0','pos']].map(([k,v,cls])=>`
+          <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #eef0f6;font-size:11px">
+            <span style="color:${cls?'#c9941a':'#8a95b0'}">${k}</span><span class="${cls}" style="font-weight:${cls?700:400}">${v}</span>
+          </div>`).join('')}
+          <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;font-weight:700;color:#1b3a6b">
+            <span>合計</span><span>¥${(INIT_K/10).toFixed(1)}万</span>
+          </div>
+        </div>
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:14px 16px">
+          <button class="royalty-btn${S.showRoyalty?' on':''}" onclick="toggleRoyalty()">
+            ${S.showRoyalty?'▼ ロイヤリティ ON（交渉中）':'▶ ロイヤリティ追加（FC・未確定）'}
+          </button>
+          ${S.showRoyalty?`<div style="margin-top:10px">
+            <div class="slider-label" style="display:flex;justify-content:space-between;font-size:11px;color:#15803d;margin-bottom:4px">
+              <span>ロイヤリティ率</span><span style="font-weight:700">${fP(S.royaltyRate)}　→　${fM(pl.royalty)}/月</span>
+            </div>
+            <input type="range" min="0" max="0.15" step="0.005" value="${S.royaltyRate}" oninput="setState('royaltyRate',+this.value)" style="accent-color:#15803d">
+            <div style="font-size:9px;color:#8a95b0;margin-top:4px">※FC交渉確定次第更新します</div>
+          </div>`:''}
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden">
+      <div style="padding:12px 18px;border-bottom:1px solid #eef0f6;font-size:11px;font-weight:700;color:#1b3a6b;letter-spacing:.08em">全シナリオ比較</div>
+      <table class="data-table">
+        <thead><tr>
+          <th class="left">シナリオ</th><th>月次売上</th><th>粗利益</th><th>限界利益</th>
+          <th>人件費</th><th>固定費計</th><th>営業利益</th><th>利益率</th><th>BEP達成率</th>
+        </tr></thead>
+        <tbody>${scRows}</tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function renderInvestor(sc,pl){
+  const dp=REPAY.map(pct=>{
+    const payment=Math.round(sc.rev*pct/100);
+    const netCF=pl.opP-payment;
+    const paybackM=payment>0?Math.ceil(INIT_K/payment):999;
+    return{pct,payment,netCF,total36:payment*36,total60:payment*60,paybackM};
+  }).find(p=>p.pct===S.displayPct)||{pct:7,payment:Math.round(sc.rev*.07),netCF:pl.opP-Math.round(sc.rev*.07),paybackM:Math.ceil(INIT_K/Math.round(sc.rev*.07)),total36:Math.round(sc.rev*.07)*36,total60:Math.round(sc.rev*.07)*60};
+
+  const allPat=REPAY.map(pct=>{
+    const payment=Math.round(sc.rev*pct/100);
+    const netCF=pl.opP-payment;
+    const paybackM=payment>0?Math.ceil(INIT_K/payment):999;
+    return{pct,payment,netCF,total36:payment*36,total60:payment*60,paybackM};
+  });
+
+  const matrixRows=Object.entries(SCENARIOS).map(([key,s],i)=>{
+    const p=calcPL(s.rev);
+    return`<tr style="background:${i%2===0?'#fff':'#f8f9fc'}">
+      <td class="left" style="font-weight:700;color:${s.color}">${s.label} <span style="font-size:10px;font-weight:400;color:#8a95b0">${fM(s.rev)}/月</span></td>
+      ${REPAY.map(pct=>{
+        const net=p.opP-Math.round(s.rev*pct/100);
+        return`<td style="color:${clr(net)};font-weight:${net<0?700:400}">${fM(net)}</td>`;
+      }).join('')}
+    </tr>`;
+  }).join('');
+
+  return`<div class="gap">
+    <div style="font-size:12px;color:#8a95b0">
+      返済額 ＝ <strong style="color:#1a1f2e">月次売上 × ○%</strong>　|　${sc.label}（${fM(pl.rev)}/月）
+      　営業利益：<strong style="color:${clr(pl.opP)}">${fM(pl.opP)}/月</strong>
+    </div>
+
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      ${REPAY.map(pct=>`<button onclick="setState('displayPct',${pct})" style="padding:7px 20px;font-size:12px;font-weight:700;border:2px solid ${S.displayPct===pct?'#1b3a6b':'#d0d5e8'};background:${S.displayPct===pct?'#1b3a6b':'#fff'};color:${S.displayPct===pct?'#fff':'#8a95b0'};border-radius:0">売上の${pct}%</button>`).join('')}
+    </div>
+
+    <div class="card" style="border-top:3px solid #1b3a6b">
+      <div style="font-size:12px;font-weight:700;color:#1b3a6b;margin-bottom:16px">
+        売上${dp.pct}%プラン　月次返済額：<span style="font-size:16px">${fM(dp.payment)}</span>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-card" style="--accent:#1b3a6b"><div class="kpi-label">月次返済額（投資家受取）</div><div class="kpi-value">${fM(dp.payment)}</div><div class="kpi-sub">売上比 ${dp.pct}%</div></div>
+        <div class="kpi-card" style="--accent:${clr(dp.netCF)}"><div class="kpi-label">GVA手残りCF</div><div class="kpi-value">${fM(dp.netCF)}</div><div class="kpi-sub">営業利益 − 返済額</div></div>
+        <div class="kpi-card" style="--accent:${dp.paybackM<=24?'#15803d':dp.paybackM<=48?'#c9941a':'#b91c1c'}"><div class="kpi-label">投資家 回収期間</div><div class="kpi-value">${dp.paybackM<999?dp.paybackM+'ヶ月':'未回収'}</div><div class="kpi-sub">¥${(INIT_K/10).toFixed(0)}万 ÷ ${fM(dp.payment)}/月</div></div>
+        <div class="kpi-card" style="--accent:#6d28d9"><div class="kpi-label">60M累計返済</div><div class="kpi-value">${fM(dp.total60)}</div><div class="kpi-sub">回収率 ${fP(dp.total60/INIT_K)}</div></div>
+      </div>
+      <div style="margin-top:16px">
+        <div class="chart-legend">
+          <span><span class="legend-dot" style="background:#c9941a"></span>GVA営業利益累計</span>
+          <span><span class="legend-dot" style="background:#1b3a6b"></span>投資家累計回収（初期投資控除後）</span>
+        </div>
+        ${makeChart(pl,dp)}
+      </div>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden">
+      <div style="padding:12px 18px;border-bottom:1px solid #eef0f6;font-size:11px;font-weight:700;color:#1b3a6b">
+        全返済率パターン比較　|　${sc.label}シナリオ（初期投資 ¥${(INIT_K/10).toFixed(0)}万）
+      </div>
+      <table class="data-table">
+        <thead><tr>
+          <th class="left">返済率</th><th>月次返済額</th><th>GVA手残り</th>
+          <th>投資家回収</th><th>36M累計</th><th>60M累計</th><th>判定</th>
+        </tr></thead>
+        <tbody>${allPat.map((p,i)=>{
+          const viable=p.netCF>=0,payOk=p.paybackM<=36;
+          const judge=!viable?'❌ 赤字':payOk?'◎ 優良':p.paybackM<=60?'○ 可':'△ 長期';
+          const jc=!viable?'#b91c1c':payOk?'#15803d':p.paybackM<=60?'#c9941a':'#8a95b0';
+          return`<tr style="cursor:pointer;background:${S.displayPct===p.pct?'#e8edf5':i%2===0?'#fff':'#f8f9fc'}" onclick="setState('displayPct',${p.pct})">
+            <td class="left" style="font-weight:700;color:#1b3a6b">売上${p.pct}%</td>
+            <td style="font-weight:700">${fM(p.payment)}</td>
+            <td style="color:${clr(p.netCF)};font-weight:700">${fM(p.netCF)}</td>
+            <td style="color:${payOk?'#15803d':'#8a95b0'}">${p.paybackM<999?p.paybackM+'ヶ月':'—'}</td>
+            <td>${fM(p.total36)}</td><td>${fM(p.total60)}</td>
+            <td style="color:${jc};font-weight:700">${judge}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden">
+      <div style="padding:12px 18px;border-bottom:1px solid #eef0f6;font-size:11px;font-weight:700;color:#1b3a6b">GVA手残りCF マトリクス（全シナリオ × 全返済率）</div>
+      <table class="data-table">
+        <thead><tr>
+          <th class="left">シナリオ</th>${REPAY.map(p=>`<th>売上${p}%</th>`).join('')}
+        </tr></thead>
+        <tbody>${matrixRows}</tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function renderScenario(sc,pl){
+  const data=[
+    {sc:SCENARIOS.bear,icon:'⚠️',
+     factors:['開業直後・認知度ゼロの状態','六本木送客がまだ動いていない','地元客の獲得に時間がかかる段階','週末のみ賑わい、平日深夜は閑散'],
+     assumption:'1日平均売上 ¥10万。シャンパン3〜5本/日相当。'},
+    {sc:SCENARIOS.base,icon:'◎',
+     factors:['六本木常連が沖縄旅行時に来店し始める','SNSで拡散・観光客への認知が広まる','リピーターが定着してきた段階','週末はほぼ満席、平日もそこそこ入る'],
+     assumption:'1日平均売上 ¥16.4万。シャンパン8〜10本/日相当。'},
+    {sc:SCENARIOS.bull,icon:'🎯',
+     factors:['六本木コネクション経由の送客が本格稼働','那覇の夜遊びの定番スポットとして定着','インバウンド富裕層の取り込み','VIP予約・ボトルキープが常態化'],
+     assumption:'1日平均売上 ¥25.7万。DearBrown六本木（CA6DEN運営元）第2期実績と同水準（月770万）。実証済みの数字。'},
+    {sc:SCENARIOS.super,icon:'🚀',
+     factors:['SNSバイラル・インフルエンサー来店で爆発的認知','シャンパンタワー・大型VIPイベントが月複数回','沖縄ナイトライフNo.1ブランドとして確立','観光シーズン（夏・年末年始）の超高単価月'],
+     assumption:'1日平均売上 ¥32.8万。週末だけで月売上の60%を達成するイメージ。'},
+  ];
+  return`<div class="gap">
+    ${data.map(({sc:s,icon,factors,assumption})=>{
+      const p=calcPL(s.rev);
+      return`<div style="background:#fff;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.07);overflow:hidden;border-left:5px solid ${s.color}">
+        <div style="padding:14px 20px;border-bottom:1px solid #eef0f6;display:flex;justify-content:space-between;align-items:center">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:20px">${icon}</span>
+            <span style="color:${s.color};font-weight:700;font-size:15px">${s.label}シナリオ</span>
+            <span style="color:${s.color};font-size:13px;font-weight:700">${fM(s.rev)}/月</span>
+            <span style="color:#8a95b0;font-size:11px">（年間 ${fM(s.rev*12)}）</span>
+          </div>
+          <span style="background:${s.color}18;color:${s.color};border:1px solid ${s.color}50;padding:3px 12px;font-size:10px;font-weight:700;border-radius:3px">${s.note}</span>
+        </div>
+        <div style="padding:18px 22px;display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#8a95b0;margin-bottom:10px">シナリオ前提</div>
+            ${factors.map((f,i)=>`<div style="font-size:11px;color:#374151;padding:5px 0;border-bottom:1px solid #f0f2f8">${i+1}. ${f}</div>`).join('')}
+            <div style="margin-top:10px;padding:8px 14px;background:${s.color}0d;border-left:3px solid ${s.color};font-size:11px;color:#374151;line-height:1.75">${assumption}</div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#8a95b0;margin-bottom:10px">このシナリオでの試算</div>
+            ${[['営業利益/月',fM(p.opP),clr(p.opP)],['営業利益率',fP(p.opM),clr(p.opP)],['BEP達成率',fP(p.rev/p.bep),'#6d28d9'],['年間営業利益',fM(p.opP*12),clr(p.opP)],['損益分岐点',fM(p.bep),'#8a95b0']].map(([k,v,c])=>`
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0f2f8">
+              <span style="font-size:11px;color:#8a95b0">${k}</span>
+              <span style="font-size:13px;font-weight:700;color:${c}">${v}</span>
+            </div>`).join('')}
+          </div>
+        </div>
+      </div>`;
+    }).join('')}
+    <div class="warn-box">
+      <div class="warn-title">★ 修正済みコスト前提について</div>
+      ${[['水道光熱費（17.5万/月）','24h年中無休・シーシャ炭火使用・沖縄高温環境（冷房強化）を実態反映。旧設定10万から修正。'],['その他固定費（25万/月）','消耗品・シーシャ機材メンテ・ゴミ処理・損害保険等の実態値。旧設定5万から修正。'],['施工期間家賃（52.5万）','内装施工1.5ヶ月分を初期投資に計上済み（35万×1.5）。旧試算に未計上だったものを追加。']].map(([k,v])=>`
+      <div style="display:flex;gap:12px;padding:5px 0;border-bottom:1px solid #fde68a">
+        <span style="font-size:11px;font-weight:700;color:#92400e;min-width:170px">${k}</span>
+        <span style="font-size:11px">${v}</span>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════
+// 状態管理・レンダリング
+// ══════════════════════════════════════════
+function setState(key,val){S[key]=val;render()}
+function toggleRoyalty(){S.showRoyalty=!S.showRoyalty;render()}
+
+function render(){
+  const sc=SCENARIOS[S.scenario];
+  const pl=calcPL(sc.rev);
+
+  // 今日の日付
+  document.getElementById('today-date').textContent=new Date().toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric'});
+
+  // シナリオボタン
+  document.querySelectorAll('.sc-btn').forEach(b=>{
+    b.classList.toggle('active',b.dataset.sc===S.scenario);
+  });
+  document.getElementById('sc-note').textContent='— '+sc.note;
+
+  // タブ
+  document.querySelectorAll('.tab-btn').forEach(b=>{
+    b.classList.toggle('active',b.dataset.tab===S.tab);
+  });
+
+  // コンテンツ
+  const main=document.getElementById('main');
+  if(S.tab==='summary') main.innerHTML=renderSummary(sc,pl);
+  else if(S.tab==='pl')  main.innerHTML=renderPL(sc,pl);
+  else if(S.tab==='investor') main.innerHTML=renderInvestor(sc,pl);
+  else main.innerHTML=renderScenario(sc,pl);
+}
+
+// イベント
+document.querySelectorAll('.sc-btn').forEach(b=>b.addEventListener('click',()=>setState('scenario',b.dataset.sc)));
+document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>setState('tab',b.dataset.tab)));
+
+// 初期レンダリング
+setState('tab','summary');
 </script>
 </body>
 </html>
