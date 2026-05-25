@@ -160,7 +160,7 @@ table{border-collapse:collapse;width:100%}
   <span class="sc-lbl">シナリオ：</span>
   <button class="sc-btn" data-sc="bear" style="--sc:#b91c1c">保守 ¥300万/月</button>
   <button class="sc-btn" data-sc="base" style="--sc:#c9941a">ベース ¥500万/月</button>
-  <button class="sc-btn" data-sc="bull" style="--sc:#15803d">強気 ¥770万/月</button>
+  <button class="sc-btn" data-sc="bull" style="--sc:#15803d">強気 ¥850万/月</button>
   <button class="sc-btn" data-sc="super" style="--sc:#6d28d9">超強気 ¥1,000万/月</button>
   <span class="sc-note-text" id="sc-note"></span>
 </div>
@@ -181,7 +181,7 @@ table{border-collapse:collapse;width:100%}
 
 <script>
 // ── 定数 ──
-const RATES={cogs:.1245,payFee:.0313,adv:.0109};
+const RATES={cogs:.085,payFee:.0313,adv:.0109}; // 原価率8.5%（CA6DEN資料記載値）
 const RENT=350,CAPEX=15000,TERM=5;
 const DEPRE=Math.round(CAPEX/TERM/12);
 const INIT_K=CAPEX+700+350+525; // 16575（施工中家賃含む）
@@ -190,7 +190,7 @@ const HRS=Math.round(24*365/12);
 const SC={
   bear:{label:'保守',  rev:3000, color:'#b91c1c',note:'開業初期・認知前'},
   base:{label:'ベース',rev:5000, color:'#c9941a',note:'軌道乗り・観光客定着'},
-  bull:{label:'強気',  rev:7702, color:'#15803d',note:'DB六本木同等・送客フル稼働'},
+  bull:{label:'強気',  rev:8500, color:'#15803d',note:'六本木店月商平均実績（850万）と同水準'},
   super:{label:'超強気',rev:10000,color:'#6d28d9',note:'VIPイベント常態化'},
 };
 const REPAY=[3,5,7,10,15];
@@ -254,7 +254,7 @@ function tSummary(){
       <div class="kpi" style="--ac:${cc(b.opP)}"><div class="kpi-lbl">月次営業利益</div><div class="kpi-val">${fM(b.opP)}</div><div class="kpi-sub">利益率 ${fP(b.om)}</div></div>
       <div class="kpi" style="--ac:var(--navy)"><div class="kpi-lbl">損益分岐点</div><div class="kpi-val">${fM(b.bep)}</div><div class="kpi-sub">達成率 ${fP(5000/b.bep)}</div></div>
       <div class="kpi" style="--ac:var(--gold)"><div class="kpi-lbl">初期投資合計</div><div class="kpi-val">${fM(INIT_K)}</div><div class="kpi-sub">施工中家賃1.5ヶ月含む ★</div></div>
-      <div class="kpi" style="--ac:var(--blue)"><div class="kpi-lbl">粗利益率</div><div class="kpi-val">${fP(b.gm)}</div><div class="kpi-sub">DB六本木実績ベース</div></div>
+      <div class="kpi" style="--ac:var(--blue)"><div class="kpi-lbl">粗利益率</div><div class="kpi-val">${fP(b.gm)}</div><div class="kpi-sub">原価率8.5%（CA6DEN公式資料記載値）</div></div>
     </div>
   </div>
 
@@ -383,7 +383,7 @@ function tPL(){
           <tbody>
             <tr class="pl-bold"><td class="L">売上高</td><td class="R" style="color:var(--gray)">${fP(1)}</td><td class="R navy">${fM(p.rev)}</td></tr>
             <tr class="pl-subhd"><td colspan="3">変動費</td></tr>
-            <tr><td class="L" style="padding-left:20px;color:var(--gray)">原材料費<span class="pl-sh">（DB実績12.5%・同業態）</span><span class="tag tag-var">変動</span></td><td class="R" style="color:#aab">${fP(RATES.cogs)}</td><td class="R">${fM(p.cogs)}</td></tr>
+            <tr><td class="L" style="padding-left:20px;color:var(--gray)">原材料費<span class="pl-sh">（CA6DEN公式：8.5%未満）</span><span class="tag tag-var">変動</span></td><td class="R" style="color:#aab">${fP(RATES.cogs)}</td><td class="R">${fM(p.cogs)}</td></tr>
             <tr><td class="L" style="padding-left:20px;color:var(--gray)">決済手数料<span class="tag tag-var">変動</span></td><td class="R" style="color:#aab">${fP(RATES.payFee)}</td><td class="R">${fM(p.payF)}</td></tr>
             <tr><td class="L" style="padding-left:20px;color:var(--gray)">広告宣伝費<span class="tag tag-var">変動</span></td><td class="R" style="color:#aab">${fP(RATES.adv)}</td><td class="R">${fM(p.adv)}</td></tr>
             ${S.royalty>0?`<tr><td class="L" style="padding-left:20px;color:#15803d">ロイヤリティ（FC・交渉中）<span class="tag tag-var">変動</span></td><td class="R" style="color:#aab">${fP(S.royalty)}</td><td class="R pos">${fM(p.roy)}</td></tr>`:''}
@@ -404,6 +404,8 @@ function tPL(){
         </table>
       </div>
       <div style="padding:10px 14px;background:#fafbfd;font-size:10px;color:var(--gray);line-height:1.8;border-top:1px solid var(--border)">
+        ★原価率8.5%：CA6DEN公式資料記載値（フレーバー原価率）。廃棄ロスゼロの在庫管理により実現。<br>
+        ★強気シナリオを850万円に更新：CA6DEN出店計画資料記載「六本木店月商平均実績：850万円」より。<br>
         ★水道光熱費17.5万：24h・シーシャ炭火・沖縄高温環境を反映（旧設定10万から修正）<br>
         ★その他固定費25万：消耗品・機材メンテ・ゴミ処理・保険含む（旧設定5万から修正）<br>
         ★初期投資${fM(INIT_K)}に施工中家賃1.5ヶ月（¥52.5万）を計上済み
@@ -539,8 +541,8 @@ function tScenario(){
      note:'1日平均売上 ¥10万。シャンパン3〜5本/日相当。'},
     {k:'base',icon:'◎',factors:['六本木常連が沖縄旅行時に来店し始める','SNSで拡散・観光客への認知が広まる','リピーターが定着してきた段階','週末はほぼ満席、平日もそこそこ入る'],
      note:'1日平均売上 ¥16.4万。シャンパン8〜10本/日相当。'},
-    {k:'bull',icon:'🎯',factors:['六本木コネクション経由の送客が本格稼働','那覇の夜遊びの定番スポットとして定着','インバウンド富裕層の取り込み','VIP予約・ボトルキープが常態化'],
-     note:'1日平均売上 ¥25.7万。DearBrown六本木（CA6DEN運営元）第2期実績と同水準（月770万）。実証済みの数字。'},
+    {k:'bull',icon:'🎯',factors:['六本木コネクション経由の送客が本格稼働','那覇の夜遊びの定番スポットとして定着','インバウンド富裕層の取り込み（台湾・香港・韓国・欧米）','VIP予約・ボトルキープ・会員制プログラムが常態化'],
+     note:'1日平均売上 ¥28.3万。CA6DEN出店計画資料記載「六本木店月商平均実績：850万円」と同水準。六本木では最大月商885万円を記録。客単価¥4,500〜¥6,000想定。'},
     {k:'super',icon:'🚀',factors:['SNSバイラル・インフルエンサー来店で爆発的認知','シャンパンタワー・大型VIPイベントが月複数回','沖縄ナイトライフNo.1ブランドとして確立','観光シーズン（夏・年末年始）の超高単価月'],
      note:'1日平均売上 ¥32.8万。週末だけで月売上の60%を達成するイメージ。'},
   ];
@@ -573,6 +575,42 @@ function tScenario(){
       </div>
     </div>`;
   }).join('')+`
+  <div style="background:#fff;border-radius:8px;box-shadow:0 1px 6px rgba(15,37,87,.08);padding:20px 24px;margin-bottom:16px">
+    <div style="font-size:11px;font-weight:700;color:var(--navy);letter-spacing:.08em;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--navy)">六本木店実績（CA6DEN出店計画資料記載）</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px">
+      <div style="background:var(--lightgray);border-radius:6px;padding:12px;text-align:center">
+        <div style="font-size:10px;color:var(--gray);margin-bottom:4px">月商平均実績</div>
+        <div style="font-size:20px;font-weight:900;color:var(--navy)">¥850万</div>
+      </div>
+      <div style="background:var(--lightgray);border-radius:6px;padding:12px;text-align:center">
+        <div style="font-size:10px;color:var(--gray);margin-bottom:4px">最大月商（３月）</div>
+        <div style="font-size:20px;font-weight:900;color:#15803d">¥885万</div>
+      </div>
+      <div style="background:var(--lightgray);border-radius:6px;padding:12px;text-align:center">
+        <div style="font-size:10px;color:var(--gray);margin-bottom:4px">原価率（公式）</div>
+        <div style="font-size:20px;font-weight:900;color:#1d4ed8">8.5%未満</div>
+      </div>
+      <div style="background:var(--lightgray);border-radius:6px;padding:12px;text-align:center">
+        <div style="font-size:10px;color:var(--gray);margin-bottom:4px">想定客単価</div>
+        <div style="font-size:20px;font-weight:900;color:#6d28d9">¥4,500〜6,000</div>
+      </div>
+    </div>
+    <div style="font-size:11px;font-weight:700;color:var(--gray);margin-bottom:8px">六本木店月次売上推移（実績）</div>
+    <div style="display:flex;gap:4px;align-items:flex-end;flex-wrap:wrap">
+      ${[['6月','698.8'],['7月','682.6'],['8月','828.9'],['9月','881.9'],['10月','851.5'],['11月','791.3'],['12月','865.9'],['1月','819.7'],['2月','692.2'],['3月','885.2'],['4月','880.8']].map(([m,v])=>{
+        const h=Math.round((parseFloat(v)/900)*80);
+        return`<div style="text-align:center;flex:1;min-width:30px">
+          <div style="font-size:9px;font-weight:700;color:var(--navy);margin-bottom:2px">${v}</div>
+          <div style="background:var(--navy);height:${h}px;border-radius:2px 2px 0 0;opacity:${parseFloat(v)>800?1:.7}"></div>
+          <div style="font-size:9px;color:var(--gray);margin-top:3px">${m}</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="margin-top:14px;padding:10px 14px;background:#f0f4ff;border-left:3px solid var(--navy);font-size:11px;line-height:1.8">
+      <strong>会員制プログラム（安定収益の柱）</strong>：GOLD ¥4,980/月　PLATINA ¥9,800/月　BLACK ¥19,800/月<br>
+      会員数が増えるほど固定収益が積み上がり、損益分岐点のリスクが低下する。
+    </div>
+  </div>
   <div class="warn-box">
     <div style="font-weight:700;color:#92400e;margin-bottom:8px">★ 修正済みコスト前提について</div>
     ${[['水道光熱費（17.5万/月）','24h年中無休・シーシャ炭火使用・沖縄高温環境（冷房強化）を実態反映。旧設定10万から修正。'],['その他固定費（25万/月）','消耗品・シーシャ機材メンテ・ゴミ処理・損害保険等の実態値。旧設定5万から修正。'],['施工期間家賃（52.5万）','内装施工1.5ヶ月分を初期投資に計上済み（35万×1.5）。旧試算に未計上だったものを追加。']].map(([k,v])=>`
