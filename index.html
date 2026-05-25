@@ -78,7 +78,7 @@ const fM = k => {
 };
 const fP = v => isFinite(v) ? `${(v*100).toFixed(1)}%` : "—";
 
-export default function App() {
+function App() {
   const [scenario,      setScenario]      = useState("base");
   const [staffPerShift, setStaffPerShift] = useState(1);
   const [partWage,      setPartWage]      = useState(1.0);
