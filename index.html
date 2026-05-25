@@ -206,7 +206,7 @@ function pl(rev){
   const fixC=labor+RENT+DEPRE+S.util+S.other;
   const opP=rev-varC-fixC,bep=cm>0?Math.round(fixC/cm):Infinity;
   return{rev,cogs,payF,adv,roy,varC,grossP,limP,cm,partL,mgrL,socL,labor,fixC,opP,bep,
-    gm:grossP/rev,om:opP/rev,lr:labor/rev};
+    gm:grossP/rev,om:opP/rev,lr:labor/rev,util:S.util,other:S.other};
 }
 const fM=k=>{if(!isFinite(k))return'—';const m=k/10;return m>=0?`¥${m.toFixed(1)}万`:`▲¥${Math.abs(m).toFixed(1)}万`};
 const fP=v=>isFinite(v)?`${(v*100).toFixed(1)}%`:'—';
