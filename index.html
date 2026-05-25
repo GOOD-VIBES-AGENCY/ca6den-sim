@@ -32,7 +32,6 @@ table{border-collapse:collapse;width:100%}
 .inv-lbl{font-size:11px;font-weight:700;color:var(--navy);white-space:nowrap}
 .inv-btn{padding:6px 18px;font-size:13px;font-weight:700;border:2px solid #b0bcd4;background:#fff;color:var(--navy);border-radius:4px;cursor:pointer;transition:all .15s}
 .inv-btn.on{border-color:#0f2557;background:#0f2557;color:#fff}
-.inv-note{font-size:10px;color:var(--gray);margin-left:8px}
 /* ── シナリオバー ── */
 #scbar{background:#fff;border-bottom:1px solid var(--border);padding:12px 32px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .sc-lbl{font-size:11px;font-weight:700;color:var(--gray);white-space:nowrap}
@@ -658,6 +657,7 @@ document.querySelectorAll('.sc-btn').forEach(b=>b.addEventListener('click',()=>s
 document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>setS('tab',b.dataset.tab)));
 function updateInvUI(){
   document.querySelectorAll('.inv-btn').forEach(b=>b.classList.toggle('on',+b.dataset.inv===INV_AMT));
+  // GVA自己資金表示なし
 }
 document.querySelectorAll('.inv-btn').forEach(b=>b.addEventListener('click',()=>{
   INV_AMT=+b.dataset.inv;
