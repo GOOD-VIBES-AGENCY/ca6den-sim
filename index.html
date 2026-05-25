@@ -213,7 +213,7 @@ const SC={
 };
 const REPAY=[5,7,10];
 
-let S={sc:'base',tab:'summary',staff:1,wage:1.0,mgr:1,mgrSal:250,util:150,other:200,outsource:150,royalty:0,showRoy:false,pct:7};
+let S={sc:'base',tab:'summary',staff:1,wage:1.0,mgr:1,mgrSal:250,util:175,other:250,outsource:150,royalty:0,showRoy:false,pct:7};
 
 function pl(rev){
   const cogs=Math.round(rev*RATES.cogs),payF=Math.round(rev*RATES.payFee),adv=Math.round(rev*RATES.adv);
@@ -272,7 +272,7 @@ function tSummary(){
       <div class="kpi" style="--ac:${cc(b.opP)}"><div class="kpi-lbl">月次営業利益</div><div class="kpi-val">${fM(b.opP)}</div><div class="kpi-sub">利益率 ${fP(b.om)}</div></div>
       <div class="kpi" style="--ac:var(--navy)"><div class="kpi-lbl">損益分岐点</div><div class="kpi-val">${fM(b.bep)}</div><div class="kpi-sub">達成率 ${fP(5000/b.bep)}</div></div>
       <div class="kpi" style="--ac:var(--gold)"><div class="kpi-lbl">初期投資合計</div><div class="kpi-val">${fM(INIT_K)}</div><div class="kpi-sub">施工中家賃1.5ヶ月含む ★</div></div>
-      <div class="kpi" style="--ac:var(--blue)"><div class="kpi-lbl">粗利益率</div><div class="kpi-val">${fP(b.gm)}</div><div class="kpi-sub">原価率8.5%（CA6DEN公式資料記載値）</div></div>
+      <div class="kpi" style="--ac:var(--blue)"><div class="kpi-lbl">粗利益率</div><div class="kpi-val">${fP(b.gm)}</div><div class="kpi-sub">原価率12.4%（第2期財務実績）</div></div>
     </div>
   </div>
 
@@ -423,7 +423,7 @@ function tPL(){
       </div>
       <div style="padding:10px 14px;background:#fafbfd;font-size:10px;color:var(--gray);line-height:1.8;border-top:1px solid var(--border)">
         ★変動費率12.4%：第2期財務実績（仕入高7,671千円÷売上61,613千円）。フレーバー+ドリンク等全仕入。<br>
-        ★強気シナリオを850万円に更新：CA6DEN出店計画資料記載「六本木店月商平均実績：850万円」より。<br>
+        ★強気シナリオ770万円：DB六本木第2期8ヶ月実績の月平均770万円を根拠とし設定。<br>
         ★水道光熱費17.5万：24h・シーシャ炭火・沖縄高温環境を反映（旧設定10万から修正）<br>
         ★その他固定費25万：消耗品・機材メンテ・ゴミ処理・保険含む（旧設定5万から修正）<br>
         ★初期投資${fM(INIT_K)}に施工中家賃1.5ヶ月（¥52.5万）を計上済み
@@ -562,7 +562,7 @@ function tScenario(){
     {k:'base',icon:'◎',factors:['六本木常連が沖縄旅行時に来店し始める','SNSで拡散・観光客への認知が広まる','リピーターが定着してきた段階','週末はほぼ満席、平日もそこそこ入る'],
      note:'1日平均売上 ¥16.4万。シャンパン8〜10本/日相当。'},
     {k:'bull',icon:'🎯',factors:['六本木コネクション経由の送客が本格稼働','那覇の夜遊びの定番スポットとして定着','インバウンド富裕層の取り込み（台湾・香港・韓国・欧米）','VIP予約・ボトルキープ・会員制プログラムが常態化'],
-     note:'1日平均売上 ¥28.3万。CA6DEN出店計画資料記載「六本木店月商平均実績：850万円」と同水準。六本木では最大月商885万円を記録。客単価¥4,500〜¥6,000想定。'},
+     note:'1日平均売上 ¥28.3万。CA6DEN出店計画資料記載DB六本木第2期8ヶ月実績の月平均770万円と同水準。客単価¥4,500〜¥6,000想定。'},
     {k:'super',icon:'🚀',factors:['SNSバイラル・インフルエンサー来店で爆発的認知','シャンパンタワー・大型VIPイベントが月複数回','沖縄ナイトライフNo.1ブランドとして確立','観光シーズン（夏・年末年始）の超高単価月'],
      note:'1日平均売上 ¥32.8万。週末だけで月売上の60%を達成するイメージ。'},
   ];
@@ -600,7 +600,7 @@ function tScenario(){
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px">
       <div style="background:var(--lightgray);border-radius:6px;padding:12px;text-align:center">
         <div style="font-size:10px;color:var(--gray);margin-bottom:4px">月商平均実績</div>
-        <div style="font-size:20px;font-weight:900;color:var(--navy)">¥850万</div>
+        <div style="font-size:20px;font-weight:900;color:var(--navy)">¥770万</div>
       </div>
       <div style="background:var(--lightgray);border-radius:6px;padding:12px;text-align:center">
         <div style="font-size:10px;color:var(--gray);margin-bottom:4px">最大月商（３月）</div>
